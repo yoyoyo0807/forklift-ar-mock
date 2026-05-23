@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Users, Construction, Box, Warehouse, ShieldAlert, AlertTriangle, CheckCircle, Info, Wifi, WifiOff, Glasses, LayoutDashboard } from "lucide-react";
 import { useVideoStream } from "@/hooks/useVideoStream";
 import { CameraView } from "./CameraView";
@@ -39,6 +39,12 @@ export function ForkliftDashboard() {
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard");
   const cfg = RISK_CONFIG[stream.risk];
   const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting";
+
+  // ページロード時に自動接続
+  useEffect(() => {
+    stream.connect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-bg text-gray-100 overflow-hidden">

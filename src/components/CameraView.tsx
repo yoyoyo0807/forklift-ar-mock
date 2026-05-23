@@ -13,7 +13,9 @@ interface Props {
 
 export function CameraView({ frame, frameNumber, fps, risk, status, statusMessage, detectionCount }: Props) {
   const isCritical = risk === "critical";
-  const isStreaming = status === "streaming";
+  // フレームが存在すれば LIVE（フレームが null なら OFFLINE）
+  // status だけで判定すると onopen/onclose のタイミングで一瞬 OFFLINE が点滅するため frame を優先
+  const isStreaming = status === "streaming" || frame !== null;
 
   return (
     <div
