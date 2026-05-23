@@ -37,16 +37,20 @@ export async function POST(req: Request) {
         .map(d => `${DETECTION_LABELS[d.type]}（距離 ${d.distance}m、信頼度 ${Math.round(d.confidence * 100)}%）`)
         .join("、");
 
-  const prompt = `あなたはフォークリフト安全管理AIです。
-検出状況: ${detectionText}
-危険度: ${RISK_LABELS[risk]}
+  const prompt = `あなたは倉庫内フォークリフト安全管理AIです。
+現在、実際の倉庫作業映像をリアルタイム解析しています。
 
-以下のJSON形式のみで返答してください（他のテキスト不要）:
+【検出状況】${detectionText}
+【危険度】${RISK_LABELS[risk]}
+
+オペレーターへの操作指示を以下のJSON形式のみで返してください（他テキスト不要）:
 {
-  "guidance": "オペレーターへの主要指示（15文字以内）",
-  "detail": "詳細説明（50文字以内）",
+  "guidance": "即座の操作指示（15文字以内・命令形）",
+  "detail": "具体的な理由と行動（50文字以内）",
   "risk": "${risk}"
-}`;
+}
+
+指示例: 危険→「緊急停止！」、警告→「徐行せよ」、安全→「前進可能」、情報→「パレット整列」`;
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
