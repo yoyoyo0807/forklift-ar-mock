@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: #0a0e1a;
+  color: #e5e7eb;
+  overflow: hidden;
+}
+
+@keyframes scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 50%, rgba(99, 102, 241, 0.03) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ar-glow-critical {
+  box-shadow: 0 0 0 2px #ef4444, 0 0 20px #ef444440;
+}
+.ar-glow-warning {
+  box-shadow: 0 0 0 2px #f59e0b, 0 0 20px #f59e0b40;
+}
+.ar-glow-safe {
+  box-shadow: 0 0 0 2px #10b981, 0 0 20px #10b98130;
+}
+.ar-glow-info {
+  box-shadow: 0 0 0 2px #6366f1, 0 0 20px #6366f130;
+}
