@@ -7,6 +7,7 @@ import { GuidancePanel } from "./GuidancePanel";
 import { AlertLog } from "./AlertLog";
 import { OperatorPanel } from "./OperatorPanel";
 import { SmartGlassHUD } from "./SmartGlassHUD";
+import { NavInfoPanel } from "./NavInfoPanel";
 import type { RiskLevel } from "@/types";
 
 const RISK_CONFIG: Record<RiskLevel, { labelJa: string; color: string; bg: string; icon: React.ReactNode }> = {
@@ -193,6 +194,9 @@ export function ForkliftDashboard() {
                 </div>
               )}
             </div>
+
+            {/* 積載ナビ */}
+            <NavInfoPanel navInfo={stream.navInfo} mastInfo={stream.mastInfo} />
 
             {/* アラートログ */}
             <div className="bg-surface rounded-xl border border-border-default p-4 flex flex-col min-h-[120px]">

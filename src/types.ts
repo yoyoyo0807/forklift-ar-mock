@@ -41,3 +41,24 @@ export interface OperatorState {
   face_turn: number;
   pose_warning: boolean;
 }
+
+export interface NavZone {
+  cx: number;
+  cy: number;
+  w: number;
+  h: number;
+}
+
+export interface NavInfo {
+  load_state: "unknown" | "empty" | "loaded";
+  nav_phase: "learning" | "navigating";
+  pickup_zone: NavZone | null;
+  dropoff_zone: NavZone | null;
+  target_zone: NavZone | null;
+}
+
+export interface MastInfo {
+  moving: boolean;
+  direction: "up" | "down" | "still";
+  magnitude: number;
+}

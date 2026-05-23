@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { AlertEntry, GuidanceResult, OperatorState, RiskLevel } from "@/types";
+import type { AlertEntry, GuidanceResult, MastInfo, NavInfo, OperatorState, RiskLevel } from "@/types";
 
 export interface StreamState {
   frame: string | null;        // base64 JPEG
@@ -13,6 +13,8 @@ export interface StreamState {
   status: "connecting" | "downloading" | "streaming" | "error" | "disconnected";
   statusMessage: string;
   alerts: AlertEntry[];
+  navInfo: NavInfo | null;
+  mastInfo: MastInfo | null;
 }
 
 interface Detection {
@@ -44,6 +46,8 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
     status: "disconnected",
     statusMessage: "接続待ち",
     alerts: [],
+    navInfo: null,
+    mastInfo: null,
   });
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -111,6 +115,8 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
             status: "streaming",
             statusMessage: "解析中",
             alerts: newAlerts,
+            navInfo: msg.nav_info ?? s.navInfo,
+            mastInfo: msg.mast_info ?? s.mastInfo,
           };
         });
       }
