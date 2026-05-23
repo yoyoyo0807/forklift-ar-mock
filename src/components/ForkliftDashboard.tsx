@@ -1,17 +1,16 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { AlertTriangle, CheckCircle, Info, ShieldAlert, Users, Box, Warehouse, Construction } from "lucide-react";
-import { useSimulation } from "@/hooks/useSimulation";
+import { Users, Construction, Box, Warehouse, ShieldAlert, AlertTriangle, CheckCircle, Info, Wifi, WifiOff } from "lucide-react";
+import { useVideoStream } from "@/hooks/useVideoStream";
 import { CameraView } from "./CameraView";
 import { GuidancePanel } from "./GuidancePanel";
 import { AlertLog } from "./AlertLog";
-import type { AlertEntry, GuidanceResult, RiskLevel } from "@/types";
+import type { RiskLevel } from "@/types";
 
-const RISK_CONFIG: Record<RiskLevel, { label: string; labelJa: string; color: string; bg: string; icon: React.ReactNode }> = {
-  critical: { label: "CRITICAL", labelJa: "緊急停止",  color: "#ef4444", bg: "bg-red-950/60 border-red-700",     icon: <ShieldAlert size={20} className="text-red-400" /> },
-  warning:  { label: "WARNING",  labelJa: "要注意",    color: "#f59e0b", bg: "bg-amber-950/50 border-amber-700", icon: <AlertTriangle size={20} className="text-amber-400" /> },
-  safe:     { label: "SAFE",     labelJa: "安全運行",  color: "#10b981", bg: "bg-emerald-950/40 border-emerald-800", icon: <CheckCircle size={20} className="text-emerald-400" /> },
-  info:     { label: "INFO",     labelJa: "情報",      color: "#6366f1", bg: "bg-indigo-950/40 border-indigo-700", icon: <Info size={20} className="text-indigo-400" /> },
+const RISK_CONFIG: Record<RiskLevel, { labelJa: string; color: string; bg: string; icon: React.ReactNode }> = {
+  critical: { labelJa: "緊急停止",  color: "#ef4444", bg: "bg-red-950/60 border-red-700",      icon: <ShieldAlert size={18} className="text-red-400" /> },
+  warning:  { labelJa: "要注意",    color: "#f59e0b", bg: "bg-amber-950/50 border-amber-700",  icon: <AlertTriangle size={18} className="text-amber-400" /> },
+  safe:     { labelJa: "安全運行",  color: "#10b981", bg: "bg-emerald-950/40 border-emerald-800", icon: <CheckCircle size={18} className="text-emerald-400" /> },
+  info:     { labelJa: "情報",      color: "#6366f1", bg: "bg-indigo-950/40 border-indigo-700", icon: <Info size={18} className="text-indigo-400" /> },
 };
 
 const DETECT_ICONS: Record<string, React.ReactNode> = {
@@ -25,103 +24,67 @@ const DETECT_LABELS: Record<string, string> = {
   person: "人物", forklift: "フォークリフト", pallet: "パレット", obstacle: "障害物",
 };
 
-function now() {
-  return new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-}
+const DETECT_COLORS: Record<string, string> = {
+  person: "#ef4444", forklift: "#6366f1", pallet: "#10b981", obstacle: "#f59e0b",
+};
 
 export function ForkliftDashboard() {
-  const scene = useSimulation();
-  const [guidance, setGuidance] = useState<GuidanceResult | null>(null);
-  const [guidanceLoading, setGuidanceLoading] = useState(false);
-  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
-  const [alerts, setAlerts] = useState<AlertEntry[]>([]);
-  const alertIdRef = useRef(0);
-  const lastRiskRef = useRef<RiskLevel>("safe");
-  const lastCallRef = useRef(0);
-
-  // Add alert when risk level changes
-  useEffect(() => {
-    if (scene.risk !== lastRiskRef.current) {
-      const newAlert: AlertEntry = {
-        id: ++alertIdRef.current,
-        time: now(),
-        message: scene.detections.length > 0
-          ? `${DETECT_LABELS[scene.detections[0].type]}を検出（${scene.detections[0].distance}m）`
-          : "エリアクリア",
-        level: scene.risk,
-      };
-      setAlerts(prev => [newAlert, ...prev.slice(0, 9)]);
-      lastRiskRef.current = scene.risk;
-    }
-  }, [scene.risk, scene.detections]);
-
-  // Call Gemini every 5s
-  const fetchGuidance = useCallback(async () => {
-    const now = Date.now();
-    if (now - lastCallRef.current < 5000) return;
-    lastCallRef.current = now;
-    setGuidanceLoading(true);
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ detections: scene.detections, risk: scene.risk }),
-      });
-      if (res.ok) {
-        const data: GuidanceResult = await res.json();
-        setGuidance(data);
-        setUpdatedAt(new Date());
-      }
-    } finally {
-      setGuidanceLoading(false);
-    }
-  }, [scene.detections, scene.risk]);
-
-  useEffect(() => {
-    fetchGuidance();
-  }, [fetchGuidance]);
-
-  const cfg = RISK_CONFIG[scene.risk];
+  const stream = useVideoStream();
+  const cfg = RISK_CONFIG[stream.risk];
+  const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting";
 
   return (
     <div className="flex flex-col h-screen bg-bg text-gray-100 overflow-hidden">
-      {/* Header */}
+      {/* ヘッダー */}
       <header className="shrink-0 flex items-center justify-between px-5 h-12 bg-surface border-b border-border-default">
         <div className="flex items-center gap-3">
           <span className="text-lg">🚛</span>
           <span className="font-bold text-sm tracking-wider text-gray-200">FORKLIFT AR ASSIST</span>
-          <span className="text-gray-700 text-xs hidden sm:block">— 操作支援システム v0.1</span>
+          <span className="text-gray-700 text-xs hidden sm:block">— YOLO11 + Gemini 2.0 Flash</span>
         </div>
         <div className="flex items-center gap-3">
+          {/* リスクインジケーター */}
           <div className={`flex items-center gap-2 px-3 py-1 rounded-lg border text-xs font-semibold transition-all duration-300 ${cfg.bg}`}>
             {cfg.icon}
             <span style={{ color: cfg.color }}>{cfg.labelJa}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-gray-600 font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            LIVE
-          </div>
+
+          {/* 接続ボタン */}
+          <button
+            onClick={isConnected ? stream.disconnect : stream.connect}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              isConnected
+                ? "bg-red-950/50 border-red-800 text-red-400 hover:bg-red-900/50"
+                : "bg-indigo-600 border-indigo-500 text-white hover:bg-indigo-500"
+            }`}
+          >
+            {isConnected ? <WifiOff size={12} /> : <Wifi size={12} />}
+            {isConnected ? "切断" : "解析開始"}
+          </button>
         </div>
       </header>
 
-      {/* Main */}
+      {/* メインエリア */}
       <main className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 p-4">
-        {/* Left: Camera */}
+        {/* 左: カメラビュー */}
         <div className="flex flex-col gap-3 min-h-0">
           <CameraView
-            detections={scene.detections}
-            frame={scene.frame}
-            fps={scene.fps}
-            risk={scene.risk}
+            frame={stream.frame}
+            frameNumber={stream.frameNumber}
+            fps={stream.fps}
+            risk={stream.risk}
+            status={stream.status}
+            statusMessage={stream.statusMessage}
+            detectionCount={stream.detections.length}
           />
 
-          {/* Stat row */}
+          {/* スタット行 */}
           <div className="grid grid-cols-4 gap-3">
             {([
-              { label: "危険度",   value: cfg.label,                   color: cfg.color },
-              { label: "検出物体", value: `${scene.detections.length}件`, color: "#94a3b8" },
-              { label: "フレーム", value: String(scene.frame),          color: "#94a3b8" },
-              { label: "FPS",      value: `${scene.fps} fps`,          color: scene.fps >= 28 ? "#10b981" : "#f59e0b" },
+              { label: "危険度",   value: cfg.labelJa,                       color: cfg.color   },
+              { label: "検出物体", value: `${stream.detections.length}件`,    color: "#94a3b8"   },
+              { label: "フレーム", value: String(stream.frameNumber),         color: "#94a3b8"   },
+              { label: "FPS",      value: stream.fps > 0 ? `${stream.fps}` : "-", color: stream.fps >= 8 ? "#10b981" : "#f59e0b" },
             ] as const).map(({ label, value, color }) => (
               <div key={label} className="bg-surface rounded-lg px-3 py-2 border border-border-default">
                 <p className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">{label}</p>
@@ -131,30 +94,34 @@ export function ForkliftDashboard() {
           </div>
         </div>
 
-        {/* Right: Panels */}
+        {/* 右: パネル群 */}
         <div className="flex flex-col gap-3 min-h-0 overflow-y-auto">
-          {/* Guidance */}
-          <GuidancePanel guidance={guidance} loading={guidanceLoading} updatedAt={updatedAt} />
+          {/* AI ガイダンス */}
+          <GuidancePanel
+            guidance={stream.guidance}
+            loading={stream.status === "connecting"}
+            updatedAt={stream.guidance ? new Date() : null}
+          />
 
-          {/* Detections */}
+          {/* 検出リスト */}
           <div className="bg-surface rounded-xl border border-border-default p-4">
-            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">現在の検出</p>
-            {scene.detections.length === 0 ? (
+            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">現在の検出物体</p>
+            {stream.detections.length === 0 ? (
               <p className="text-xs text-gray-700 text-center py-4">検出なし</p>
             ) : (
-              <div className="space-y-2">
-                {scene.detections.map((d) => (
+              <div className="space-y-2.5">
+                {stream.detections.map((d) => (
                   <div key={d.id} className="flex items-center gap-2 text-xs animate-fade-in">
-                    <span className="text-gray-600">{DETECT_ICONS[d.type]}</span>
-                    <span className="text-gray-300 font-medium">{DETECT_LABELS[d.type]}</span>
+                    <span className="text-gray-600 shrink-0">{DETECT_ICONS[d.type]}</span>
+                    <span className="text-gray-300 font-medium">{DETECT_LABELS[d.type] ?? d.type}</span>
+                    {(d as { pose_warning?: boolean }).pose_warning && (
+                      <span className="text-red-400 text-[10px] font-bold">転倒</span>
+                    )}
                     <span className="ml-auto font-mono text-gray-400">{d.distance}m</span>
-                    <div className="w-16 h-1 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="w-14 h-1 bg-gray-800 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${d.confidence * 100}%`,
-                          background: d.type === "person" ? "#ef4444" : d.type === "obstacle" ? "#f59e0b" : "#10b981",
-                        }}
+                        style={{ width: `${d.confidence * 100}%`, background: DETECT_COLORS[d.type] ?? "#94a3b8" }}
                       />
                     </div>
                     <span className="font-mono text-gray-600 text-[10px]">{Math.round(d.confidence * 100)}%</span>
@@ -164,12 +131,10 @@ export function ForkliftDashboard() {
             )}
           </div>
 
-          {/* Alert log */}
+          {/* アラートログ */}
           <div className="bg-surface rounded-xl border border-border-default p-4 flex flex-col min-h-[120px]">
-            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3 shrink-0">
-              アラートログ
-            </p>
-            <AlertLog alerts={alerts} />
+            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3 shrink-0">アラートログ</p>
+            <AlertLog alerts={stream.alerts} />
           </div>
         </div>
       </main>
