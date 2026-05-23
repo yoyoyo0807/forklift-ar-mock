@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { AlertEntry, GuidanceResult, RiskLevel } from "@/types";
+import type { AlertEntry, GuidanceResult, OperatorState, RiskLevel } from "@/types";
 
 export interface StreamState {
   frame: string | null;        // base64 JPEG
   detections: Detection[];
+  operatorState: OperatorState | null;
   risk: RiskLevel;
   guidance: GuidanceResult | null;
   frameNumber: number;
@@ -35,6 +36,7 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
   const [state, setState] = useState<StreamState>({
     frame: null,
     detections: [],
+    operatorState: null,
     risk: "safe",
     guidance: null,
     frameNumber: 0,
@@ -101,6 +103,7 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
             ...s,
             frame: msg.frame,
             detections: msg.detections ?? [],
+            operatorState: msg.operator_state ?? s.operatorState,
             risk,
             guidance: msg.guidance ?? s.guidance,
             frameNumber: msg.frame_number ?? s.frameNumber,

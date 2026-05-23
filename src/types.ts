@@ -30,3 +30,14 @@ export interface AlertEntry {
   message: string;
   level: RiskLevel;
 }
+
+export interface OperatorState {
+  distance: number;
+  attention_score: number;   // 0-100
+  fatigue: boolean;
+  distracted: boolean;
+  head_angle: "forward" | "nodding" | "left" | "right";
+  head_drop: number;
+  face_turn: number;
+  pose_warning: boolean;
+}
