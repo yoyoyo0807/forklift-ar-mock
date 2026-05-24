@@ -1,6 +1,6 @@
 "use client";
-import { Brain, Loader2, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, CheckCircle2 } from "lucide-react";
-import type { ForkAlign, GuidanceResult, RiskLevel } from "@/types";
+import { Brain, Loader2, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, CheckCircle2, CircleDot } from "lucide-react";
+import type { ForkAlign, GuidanceResult, NavDirection, NavPhase, RiskLevel } from "@/types";
 
 const RISK_COLORS: Record<RiskLevel, string> = {
   critical: "border-red-700 bg-red-950/40",
@@ -27,6 +27,47 @@ function secondsAgo(date: Date) {
   if (s < 5) return "今";
   if (s < 60) return `${s}秒前`;
   return `${Math.floor(s / 60)}分前`;
+}
+
+function NavDirectionArrow({ direction, phase }: { direction: NavDirection; phase?: NavPhase }) {
+  const isActionPhase = phase === "pickup" || phase === "deliver";
+
+  const arrowMap: Record<NavDirection, { icon: React.ReactNode; label: string; color: string }> = {
+    forward: {
+      icon:  <ArrowUp size={28} strokeWidth={2.5} />,
+      label: "前進",
+      color: "text-emerald-400",
+    },
+    left: {
+      icon:  <ArrowLeft size={28} strokeWidth={2.5} />,
+      label: "左折",
+      color: "text-amber-400",
+    },
+    right: {
+      icon:  <ArrowRight size={28} strokeWidth={2.5} />,
+      label: "右折",
+      color: "text-amber-400",
+    },
+    reverse: {
+      icon:  <ArrowDown size={28} strokeWidth={2.5} />,
+      label: "後退",
+      color: "text-orange-400",
+    },
+    stop: {
+      icon:  <CircleDot size={28} strokeWidth={2.5} />,
+      label: isActionPhase ? (phase === "pickup" ? "ピックアップ" : "降ろす") : "停止",
+      color: isActionPhase ? "text-indigo-400" : "text-gray-400",
+    },
+  };
+
+  const { icon, label, color } = arrowMap[direction] ?? arrowMap.forward;
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-1 min-w-[56px]">
+      <div className={`${color} drop-shadow-lg`}>{icon}</div>
+      <span className={`text-[10px] font-bold tracking-wide ${color}`}>{label}</span>
+    </div>
+  );
 }
 
 function ForkAlignGuide({ fa }: { fa: ForkAlign }) {
@@ -100,12 +141,25 @@ export function GuidancePanel({ guidance, loading, updatedAt }: Props) {
 
       {guidance ? (
         <div className="animate-fade-in space-y-2">
-          <p className={`text-xl font-bold tracking-tight ${GUIDANCE_COLORS[risk]}`}>
-            {guidance.guidance}
-          </p>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            {guidance.detail}
-          </p>
+          {/* ガイダンス文 + 進行方向矢印 */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <p className={`text-xl font-bold tracking-tight ${GUIDANCE_COLORS[risk]}`}>
+                {guidance.guidance}
+              </p>
+              <p className="text-xs text-gray-400 leading-relaxed mt-1">
+                {guidance.detail}
+              </p>
+            </div>
+            {guidance.nav_direction && (
+              <div className="border-l border-white/10 pl-3">
+                <NavDirectionArrow
+                  direction={guidance.nav_direction}
+                  phase={guidance.nav_phase}
+                />
+              </div>
+            )}
+          </div>
           {guidance.fork_align && (
             <ForkAlignGuide fa={guidance.fork_align} />
           )}

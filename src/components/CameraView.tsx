@@ -2,7 +2,7 @@
 import type { RiskLevel } from "@/types";
 
 interface Props {
-  frame: string | null;         // base64 JPEG（バックエンドが YOLO 描画済み）
+  frame: string | null;
   frameNumber: number;
   fps: number;
   risk: RiskLevel;
@@ -11,11 +11,17 @@ interface Props {
   detectionCount: number;
 }
 
+function parseAnalysisProgress(msg: string): { pct: number; done: number; total: number } | null {
+  const m = msg.match(/(\d+)\/(\d+)[^\d]*\((\d+)%\)/);
+  if (!m) return null;
+  return { done: parseInt(m[1]), total: parseInt(m[2]), pct: parseInt(m[3]) };
+}
+
 export function CameraView({ frame, frameNumber, fps, risk, status, statusMessage, detectionCount }: Props) {
-  const isCritical = risk === "critical";
-  // フレームが存在すれば LIVE（フレームが null なら OFFLINE）
-  // status だけで判定すると onopen/onclose のタイミングで一瞬 OFFLINE が点滅するため frame を優先
-  const isStreaming = status === "streaming" || frame !== null;
+  const isCritical  = risk === "critical";
+  const isAnalyzing = status === "analyzing";
+  const isStreaming  = (status === "streaming" || frame !== null) && !isAnalyzing;
+  const progress     = isAnalyzing ? parseAnalysisProgress(statusMessage) : null;
 
   return (
     <div
@@ -52,6 +58,33 @@ export function CameraView({ frame, frameNumber, fps, risk, status, statusMessag
               <p className="text-gray-700 text-xs font-mono tracking-widest">AWAITING STREAM</p>
             </>
           )}
+        </div>
+      )}
+
+      {/* 事前解析中オーバーレイ */}
+      {isAnalyzing && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gray-950/95 z-20">
+          <div className="text-indigo-400 text-xs font-mono tracking-widest uppercase mb-1">
+            Gemini Vision 解析中
+          </div>
+          {/* パーセント */}
+          <div className="text-5xl font-bold font-mono text-white tabular-nums">
+            {progress ? `${progress.pct}` : "0"}
+            <span className="text-2xl text-gray-400">%</span>
+          </div>
+          {/* プログレスバー */}
+          <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+              style={{ width: `${progress?.pct ?? 0}%` }}
+            />
+          </div>
+          {/* フレーム数 */}
+          <div className="text-gray-500 text-xs font-mono">
+            {progress ? `${progress.done} / ${progress.total} フレーム解析済み` : "初期化中..."}
+          </div>
+          {/* スピナー */}
+          <div className="mt-2 w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 

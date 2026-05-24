@@ -26,10 +26,15 @@ export interface ForkAlign {
   ready: boolean;
 }
 
+export type NavDirection = "forward" | "left" | "right" | "stop" | "reverse";
+export type NavPhase = "approach" | "pickup" | "carry" | "deliver" | "return" | "idle";
+
 export interface GuidanceResult {
   guidance: string;
   detail: string;
   risk: RiskLevel;
+  nav_phase?: NavPhase;
+  nav_direction?: NavDirection;
   is_fork_loaded?: boolean;
   fork_align?: ForkAlign;
 }
