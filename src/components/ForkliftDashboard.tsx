@@ -38,12 +38,13 @@ type ViewMode = "dashboard" | "smartglass";
 export function ForkliftDashboard() {
   const stream = useVideoStream();
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard");
+  const [started, setStarted] = useState(false);
   const cfg = RISK_CONFIG[stream.risk];
   const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting" || stream.status === "analyzing";
 
-  // ランディング画面: 未接続のときはランディングを表示
-  if (stream.status === "disconnected") {
-    return <LandingScreen onStart={stream.connect} />;
+  // 一度も開始していなければランディングを表示
+  if (!started) {
+    return <LandingScreen onStart={() => { setStarted(true); stream.connect(); }} />;
   }
 
   return (
