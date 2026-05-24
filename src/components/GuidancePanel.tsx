@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Brain, Loader2, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, CheckCircle2, CircleDot } from "lucide-react";
 import type { ForkAlign, GuidanceResult, NavDirection, NavPhase, RiskLevel } from "@/types";
 
@@ -32,7 +33,7 @@ function secondsAgo(date: Date) {
 function NavDirectionArrow({ direction, phase }: { direction: NavDirection; phase?: NavPhase }) {
   const isActionPhase = phase === "pickup" || phase === "deliver";
 
-  const arrowMap: Record<NavDirection, { icon: React.ReactNode; label: string; color: string }> = {
+  const arrowMap: Record<NavDirection, { icon: JSX.Element; label: string; color: string }> = {
     forward: {
       icon:  <ArrowUp size={28} strokeWidth={2.5} />,
       label: "前進",
