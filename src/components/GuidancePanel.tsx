@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Brain, Loader2, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, CheckCircle2, CircleDot } from "lucide-react";
+import { Brain, Loader2, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, ArrowUpLeft, ArrowUpRight, ArrowDownLeft, ArrowDownRight, CheckCircle2, CircleDot } from "lucide-react";
 import type { ForkAlign, GuidanceResult, NavDirection, NavPhase, RiskLevel } from "@/types";
 
 const RISK_COLORS: Record<RiskLevel, string> = {
@@ -39,6 +39,16 @@ function NavDirectionArrow({ direction, phase }: { direction: NavDirection; phas
       label: "前進",
       color: "text-emerald-400",
     },
+    forward_left: {
+      icon:  <ArrowUpLeft size={28} strokeWidth={2.5} />,
+      label: "左前進",
+      color: "text-emerald-400",
+    },
+    forward_right: {
+      icon:  <ArrowUpRight size={28} strokeWidth={2.5} />,
+      label: "右前進",
+      color: "text-emerald-400",
+    },
     left: {
       icon:  <ArrowLeft size={28} strokeWidth={2.5} />,
       label: "左折",
@@ -52,6 +62,16 @@ function NavDirectionArrow({ direction, phase }: { direction: NavDirection; phas
     reverse: {
       icon:  <ArrowDown size={28} strokeWidth={2.5} />,
       label: "後退",
+      color: "text-orange-400",
+    },
+    reverse_left: {
+      icon:  <ArrowDownLeft size={28} strokeWidth={2.5} />,
+      label: "左後退",
+      color: "text-orange-400",
+    },
+    reverse_right: {
+      icon:  <ArrowDownRight size={28} strokeWidth={2.5} />,
+      label: "右後退",
       color: "text-orange-400",
     },
     stop: {

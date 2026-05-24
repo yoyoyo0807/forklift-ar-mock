@@ -26,7 +26,11 @@ export interface ForkAlign {
   ready: boolean;
 }
 
-export type NavDirection = "forward" | "left" | "right" | "stop" | "reverse";
+export type NavDirection =
+  | "forward" | "forward_left" | "forward_right"
+  | "left" | "right"
+  | "reverse" | "reverse_left" | "reverse_right"
+  | "stop";
 export type NavPhase = "approach" | "pickup" | "carry" | "deliver" | "return" | "idle";
 
 export interface GuidanceResult {
