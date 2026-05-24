@@ -18,10 +18,20 @@ export interface SceneState {
   risk: RiskLevel;
 }
 
+export interface ForkAlign {
+  visible: boolean;
+  x: "left" | "center" | "right";
+  y: "too_high" | "correct" | "too_low";
+  action: string;
+  ready: boolean;
+}
+
 export interface GuidanceResult {
   guidance: string;
   detail: string;
   risk: RiskLevel;
+  is_fork_loaded?: boolean;
+  fork_align?: ForkAlign;
 }
 
 export interface AlertEntry {
