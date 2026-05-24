@@ -120,7 +120,7 @@ export function GuidancePanel({ guidance, loading, updatedAt }: Props) {
 
       <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-1.5 text-[10px] text-gray-700">
         <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-        Powered by Gemini 2.0 Flash
+        Powered by Gemini 2.5 Flash
       </div>
     </div>
   );
