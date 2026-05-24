@@ -91,8 +91,10 @@ function NavDirectionArrow({ direction, phase }: { direction: NavDirection; phas
   );
 }
 
-function ForkAlignGuide({ fa }: { fa: ForkAlign }) {
+function ForkAlignGuide({ fa, navDirection }: { fa: ForkAlign; navDirection?: string }) {
   if (!fa.visible) return null;
+  // 走行中はピック可能を表示しない（安全性確保）
+  const canPickup = fa.ready && navDirection === "stop";
 
   const xArrow = fa.x === "left"
     ? <ArrowLeft size={18} className="text-amber-400" />
@@ -112,7 +114,7 @@ function ForkAlignGuide({ fa }: { fa: ForkAlign }) {
         フォーク位置ガイダンス
       </div>
 
-      {fa.ready ? (
+      {canPickup ? (
         <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
           <CheckCircle2 size={16} />
           ピック可能！
@@ -182,7 +184,7 @@ export function GuidancePanel({ guidance, loading, updatedAt }: Props) {
             )}
           </div>
           {guidance.fork_align && (
-            <ForkAlignGuide fa={guidance.fork_align} />
+            <ForkAlignGuide fa={guidance.fork_align} navDirection={guidance.nav_direction} />
           )}
         </div>
       ) : (
