@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Users, Construction, Box, Warehouse, ShieldAlert, AlertTriangle, CheckCircle, Info, Wifi, WifiOff, Glasses, LayoutDashboard } from "lucide-react";
+import { useState } from "react";
+import { Users, Construction, Box, Warehouse, ShieldAlert, AlertTriangle, CheckCircle, Info, WifiOff, Glasses, LayoutDashboard } from "lucide-react";
 import { useVideoStream } from "@/hooks/useVideoStream";
 import { CameraView } from "./CameraView";
 import { GuidancePanel } from "./GuidancePanel";
@@ -8,6 +8,7 @@ import { AlertLog } from "./AlertLog";
 import { OperatorPanel } from "./OperatorPanel";
 import { SmartGlassHUD } from "./SmartGlassHUD";
 import { NavInfoPanel } from "./NavInfoPanel";
+import { LandingScreen } from "./LandingScreen";
 import type { RiskLevel } from "@/types";
 
 const RISK_CONFIG: Record<RiskLevel, { labelJa: string; color: string; bg: string; icon: React.ReactNode }> = {
@@ -40,11 +41,10 @@ export function ForkliftDashboard() {
   const cfg = RISK_CONFIG[stream.risk];
   const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting" || stream.status === "analyzing";
 
-  // ページロード時に自動接続
-  useEffect(() => {
-    stream.connect();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // ランディング画面: 未接続のときはランディングを表示
+  if (stream.status === "disconnected") {
+    return <LandingScreen onStart={stream.connect} />;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-bg text-gray-100 overflow-hidden">
@@ -90,17 +90,13 @@ export function ForkliftDashboard() {
             </button>
           </div>
 
-          {/* 接続ボタン */}
+          {/* 切断ボタン（ランディングに戻る） */}
           <button
-            onClick={isConnected ? stream.disconnect : stream.connect}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-              isConnected
-                ? "bg-red-950/50 border-red-800 text-red-400 hover:bg-red-900/50"
-                : "bg-indigo-600 border-indigo-500 text-white hover:bg-indigo-500"
-            }`}
+            onClick={stream.disconnect}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border bg-red-950/50 border-red-800 text-red-400 hover:bg-red-900/50 transition-colors"
           >
-            {isConnected ? <WifiOff size={12} /> : <Wifi size={12} />}
-            {isConnected ? "切断" : "解析開始"}
+            <WifiOff size={12} />
+            終了
           </button>
         </div>
       </header>
