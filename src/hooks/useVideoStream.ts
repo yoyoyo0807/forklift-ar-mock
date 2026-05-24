@@ -68,6 +68,13 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data as string);
 
+      if (msg.type === "superseded") {
+        // 新しい接続に置き換えられた → 自動再接続しない
+        shouldReconnectRef.current = false;
+        setState(s => ({ ...s, status: "disconnected", statusMessage: "別の接続に切り替わりました", frame: null, fps: 0 }));
+        return;
+      }
+
       if (msg.type === "status") {
         const isDownloading = (msg.message as string).includes("ダウンロード");
         setState(s => ({
@@ -106,7 +113,19 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
             ...s,
             frame:         msg.frame,
             detections:    msg.detections ?? [],
-            operatorState: msg.operator_state ?? s.operatorState,
+            operatorState: msg.operator_state
+              ? {
+                  ...msg.operator_state,
+                  gemini_fatigue: msg.operator_fatigue ?? false,
+                  gemini_ppe:     msg.operator_ppe     ?? true,
+                }
+              : s.operatorState
+                ? {
+                    ...s.operatorState,
+                    gemini_fatigue: msg.operator_fatigue ?? s.operatorState.gemini_fatigue ?? false,
+                    gemini_ppe:     msg.operator_ppe     ?? s.operatorState.gemini_ppe     ?? true,
+                  }
+                : null,
             risk,
             guidance:      msg.guidance ?? s.guidance,
             frameNumber:   msg.frame_number ?? s.frameNumber,
@@ -153,7 +172,9 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
       setState(s => ({ ...s, status: "error", statusMessage: "NEXT_PUBLIC_WS_URL が設定されていません" }));
       return;
     }
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    // OPEN・CONNECTING 両方でスキップ（React StrictMode の二重マウント対策）
+    if (wsRef.current?.readyState === WebSocket.OPEN ||
+        wsRef.current?.readyState === WebSocket.CONNECTING) return;
 
     // 既存の再接続タイマーをクリア
     if (reconnectTimerRef.current) {

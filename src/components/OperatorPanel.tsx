@@ -146,7 +146,7 @@ export function OperatorPanel({ operator, streaming }: Props) {
       <div className="flex gap-2 flex-wrap">
         <StatusBadge
           label="居眠り"
-          active={operator.fatigue}
+          active={operator.fatigue || (operator.gemini_fatigue ?? false)}
           alertColor="bg-red-950/70 border-red-700 text-red-400"
         />
         <StatusBadge
@@ -159,7 +159,29 @@ export function OperatorPanel({ operator, streaming }: Props) {
           active={operator.pose_warning}
           alertColor="bg-red-950/70 border-red-700 text-red-400"
         />
+        <StatusBadge
+          label="PPE未装着"
+          active={!(operator.gemini_ppe ?? true)}
+          alertColor="bg-yellow-950/70 border-yellow-600 text-yellow-400"
+        />
       </div>
+
+      {/* Gemini AI 判定ソース表示 */}
+      {(operator.gemini_fatigue !== undefined) && (
+        <div className="mt-2 pt-2 border-t border-gray-800 flex items-center gap-1.5">
+          <span className="text-[9px] text-indigo-500 font-semibold uppercase tracking-wider">Gemini AI</span>
+          <span className="text-[9px] text-gray-600">|</span>
+          <span className={`text-[9px] font-semibold ${operator.gemini_ppe === false ? "text-yellow-400" : "text-emerald-500"}`}>
+            {operator.gemini_ppe === false ? "⚠ PPE未装着" : "✓ PPE装着"}
+          </span>
+          {operator.gemini_fatigue && (
+            <>
+              <span className="text-[9px] text-gray-600">|</span>
+              <span className="text-[9px] font-semibold text-red-400">⚠ 疲労検出</span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

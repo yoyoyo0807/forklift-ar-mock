@@ -53,7 +53,7 @@ export function ForkliftDashboard() {
         <div className="flex items-center gap-3">
           <span className="text-lg">🚛</span>
           <span className="font-bold text-sm tracking-wider text-gray-200">FORKLIFT AR ASSIST</span>
-          <span className="text-gray-700 text-xs hidden sm:block">— YOLO11 + Gemini 2.0 Flash</span>
+          <span className="text-gray-700 text-xs hidden sm:block">— YOLO11 + Gemini 2.5 Flash</span>
         </div>
         <div className="flex items-center gap-3">
           {/* リスクインジケーター */}

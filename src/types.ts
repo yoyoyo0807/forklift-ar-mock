@@ -40,6 +40,10 @@ export interface OperatorState {
   head_drop: number;
   face_turn: number;
   pose_warning: boolean;
+  /** Gemini Vision による疲労検出（居眠り・目閉じなど） */
+  gemini_fatigue?: boolean;
+  /** Gemini Vision による PPE 装着確認（ヘルメット・安全ベスト） */
+  gemini_ppe?: boolean;
 }
 
 export interface NavZone {
