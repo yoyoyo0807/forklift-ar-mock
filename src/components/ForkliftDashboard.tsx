@@ -38,7 +38,7 @@ export function ForkliftDashboard() {
   const stream = useVideoStream();
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard");
   const cfg = RISK_CONFIG[stream.risk];
-  const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting";
+  const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting" || stream.status === "analyzing";
 
   // ページロード時に自動接続
   useEffect(() => {

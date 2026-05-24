@@ -13,7 +13,7 @@ export interface StreamState {
   guidance: GuidanceResult | null;
   frameNumber: number;
   fps: number;
-  status: "connecting" | "downloading" | "streaming" | "error" | "disconnected";
+  status: "connecting" | "downloading" | "analyzing" | "streaming" | "error" | "disconnected";
   statusMessage: string;
   alerts: AlertEntry[];
   navInfo: NavInfo | null;
@@ -76,12 +76,11 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
       }
 
       if (msg.type === "status") {
-        const isDownloading = (msg.message as string).includes("ダウンロード");
-        setState(s => ({
-          ...s,
-          status: isDownloading ? "downloading" : "streaming",
-          statusMessage: msg.message,
-        }));
+        const m = msg.message as string;
+        const status = m.includes("ダウンロード") ? "downloading"
+                     : m.includes("事前解析")    ? "analyzing"
+                     : "streaming";
+        setState(s => ({ ...s, status, statusMessage: m }));
         return;
       }
 
