@@ -8,6 +8,7 @@ import { AlertLog } from "./AlertLog";
 import { OperatorPanel } from "./OperatorPanel";
 import { SmartGlassHUD } from "./SmartGlassHUD";
 import { NavInfoPanel } from "./NavInfoPanel";
+import { MovementMap } from "./MovementMap";
 import { LandingScreen } from "./LandingScreen";
 import type { RiskLevel } from "@/types";
 
@@ -197,6 +198,14 @@ export function ForkliftDashboard() {
                 </div>
               )}
             </div>
+
+            {/* 走行軌跡マップ */}
+            <MovementMap
+              guidance={stream.guidance}
+              risk={stream.risk}
+              frameNumber={stream.frameNumber}
+              streaming={isConnected}
+            />
 
             {/* 積載ナビ */}
             <NavInfoPanel navInfo={stream.navInfo} mastInfo={stream.mastInfo} />
