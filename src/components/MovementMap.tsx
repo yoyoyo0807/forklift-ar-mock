@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { Navigation } from "lucide-react";
 import { useMovementLog, MAP_SIZE, type MovementPoint } from "@/hooks/useMovementLog";
-import type { FlowPos } from "@/hooks/useVideoStream";
+import type { FlowSignal } from "@/hooks/useVideoStream";
 import type { GuidanceResult, NavPhase, RiskLevel } from "@/types";
 
 const RISK_COLOR: Record<RiskLevel, string> = {
@@ -139,18 +139,18 @@ interface Props {
   risk: RiskLevel;
   frameNumber: number;
   streaming: boolean;
-  flowPos: FlowPos | null;
+  flowSignal: FlowSignal | null;
 }
 
-export function MovementMap({ guidance, risk, frameNumber, streaming, flowPos }: Props) {
+export function MovementMap({ guidance, risk, frameNumber, streaming, flowSignal }: Props) {
   const navPhase = guidance?.nav_phase;
-  const log      = useMovementLog(flowPos, risk, navPhase, frameNumber);
+  const log      = useMovementLog(flowSignal, risk, navPhase, frameNumber);
   const current  = log[log.length - 1];
 
   const dangerCount = useMemo(() => log.filter(p => p.risk === "critical").length, [log]);
   const warnCount   = useMemo(() => log.filter(p => p.risk === "warning").length,  [log]);
 
-  const hasFlow = flowPos !== null;
+  const hasFlow = flowSignal !== null;
 
   return (
     <div className="bg-surface rounded-xl border border-border-default p-4 flex flex-col gap-3">
@@ -164,7 +164,7 @@ export function MovementMap({ guidance, risk, frameNumber, streaming, flowPos }:
               ? "bg-emerald-950/50 text-emerald-400 border border-emerald-800"
               : "bg-gray-900 text-gray-600 border border-gray-800"
           }`}>
-            {hasFlow ? "Gemini+Flow" : "待機中"}
+            {hasFlow ? "OpticalFlow" : "待機中"}
           </span>
         </p>
         <span className="text-[10px] text-gray-600">{log.length}pt</span>

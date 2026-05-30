@@ -10,6 +10,12 @@ export interface FlowPos {
   y: number;
 }
 
+/** バックエンドから1フレームごとに届く光学フロー信号（ヨー・前進） */
+export interface FlowSignal {
+  yaw: number;     // 右旋回が正 (right_dx − left_dx)
+  forward: number; // 前進が正 (下半分フロー反転)
+}
+
 export interface StreamState {
   frame: string | null;        // base64 JPEG
   detections: Detection[];
@@ -24,6 +30,7 @@ export interface StreamState {
   navInfo: NavInfo | null;
   mastInfo: MastInfo | null;
   flowPos: FlowPos | null;
+  flowSignal: FlowSignal | null;
 }
 
 interface Detection {
@@ -58,6 +65,7 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
     navInfo: null,
     mastInfo: null,
     flowPos: null,
+    flowSignal: null,
   });
 
   const wsRef              = useRef<WebSocket | null>(null);
@@ -141,7 +149,8 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
             alerts:        newAlerts,
             navInfo:       msg.nav_info  ?? s.navInfo,
             mastInfo:      msg.mast_info ?? s.mastInfo,
-            flowPos:       msg.flow_pos  ?? s.flowPos,
+            flowPos:       msg.flow_pos    ?? s.flowPos,
+            flowSignal:    (msg.flow_signal as FlowSignal | null | undefined) ?? null,
           };
         });
       }

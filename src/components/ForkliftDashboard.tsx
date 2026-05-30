@@ -205,7 +205,7 @@ export function ForkliftDashboard() {
               risk={stream.risk}
               frameNumber={stream.frameNumber}
               streaming={isConnected}
-              flowPos={stream.flowPos}
+              flowSignal={stream.flowSignal}
             />
 
             {/* 積載ナビ */}
