@@ -16,15 +16,18 @@ export const MAP_SIZE = 200;
 
 // ── ビークルモデル定数 ────────────────────────────────────────────────────
 // TRUCK ゾーン(165,22) が右上、STORAGE(38,168) が左下の 200×200 マップ。
-// SVG は y 下向きなので "上向き前進" = y 減少。
-// theta=0 → y 減少方向（上向き）。theta 増加 → 時計回り。
-// INITIAL_THETA: center(100,100) → TRUCK(165,22) の方位角
-//   dx=+65, dy=-78 (SVG) → atan2(+65, +78) ≈ 0.69 rad
-const INITIAL_X     = 100.0;  // 初期 X（マップ中央）
-const INITIAL_Y     = 100.0;  // 初期 Y（マップ中央）
-const INITIAL_THETA = 0.69;   // 初期進行方向（右上 = TRUCK 方向）
-const YAW_SCALE     = 0.04;   // ヨー係数（光学フロー差 px → ラジアン）
-const FORWARD_SCALE = 0.15;   // 前進係数（光学フロー px → マップ px）
+// SVG は y 下向き。theta=0 → 上向き（y 減少）、theta 増加 → 時計回り。
+//
+// INITIAL_THETA = 0.69 rad の根拠:
+//   動画開始時はトラック横付け位置 → 90°左×2回 = 合計 180° 旋回後に
+//   STORAGE 方向を向く。0.69 − π ≈ −2.45 rad が TRUCK→STORAGE 方位角と一致。
+//
+// スケール係数は実際の軌跡と比較しながら調整する。
+const INITIAL_X     = 155.0;  // 初期 X（TRUCK ゾーン付近）
+const INITIAL_Y     = 40.0;   // 初期 Y（TRUCK ゾーン付近）
+const INITIAL_THETA = 0.69;   // 初期進行方向（TRUCK 正面の少し横向き）
+const YAW_SCALE     = 0.05;   // ヨー係数（90° ターン検出向けに微増）
+const FORWARD_SCALE = 0.25;   // 前進係数（TRUCK→STORAGE 距離に合わせ微増）
 const MIN_STEP      = 0.3;    // 記録最小移動量（px）
 // ─────────────────────────────────────────────────────────────────────────
 
