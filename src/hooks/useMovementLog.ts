@@ -26,8 +26,8 @@ export const MAP_SIZE = 200;
 const INITIAL_X     = 155.0;  // 初期 X（TRUCK ゾーン付近）
 const INITIAL_Y     = 40.0;   // 初期 Y（TRUCK ゾーン付近）
 const INITIAL_THETA = 0.69;   // 初期進行方向（TRUCK 正面の少し横向き）
-const YAW_SCALE     = 0.05;   // ヨー係数（90° ターン検出向けに微増）
-const FORWARD_SCALE = 0.25;   // 前進係数（TRUCK→STORAGE 距離に合わせ微増）
+const YAW_SCALE     = 0.15;   // ヨー係数（90°旋回で合計yaw≈10 → π/2 ÷ 10 ≈ 0.157）
+const FORWARD_SCALE = 100.0;  // 前進係数（搬送フェーズ合計fwd≈1.76 / TRUCK→STORAGE 193px ≈ 110）
 const MIN_STEP      = 0.3;    // 記録最小移動量（px）
 // ─────────────────────────────────────────────────────────────────────────
 
