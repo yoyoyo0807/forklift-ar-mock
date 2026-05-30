@@ -93,7 +93,7 @@ function CurrentPosition({ point }: { point: MovementPoint }) {
   );
 }
 
-/** 倉庫グリッド背景 */
+/** 倉庫グリッド + ゾーン表示 */
 function WarehouseGrid() {
   const lines: React.ReactNode[] = [];
   for (let i = 25; i < MAP_SIZE; i += 25) {
@@ -102,7 +102,20 @@ function WarehouseGrid() {
       <line key={`v${i}`} x1={i} y1={0} x2={i} y2={MAP_SIZE} stroke="#1f2937" strokeWidth={0.4} />,
     );
   }
-  return <g>{lines}</g>;
+  return (
+    <g>
+      {/* トラックゾーン（右上）*/}
+      <rect x={120} y={5} width={75} height={65} rx={4}
+        fill="#6366f1" fillOpacity={0.07} stroke="#6366f1" strokeOpacity={0.25} strokeWidth={0.6} />
+      <text x={157} y={24} fontSize={5} fill="#6366f1" fillOpacity={0.6} textAnchor="middle" fontFamily="system-ui">TRUCK</text>
+      {/* 倉庫ゾーン（左下）*/}
+      <rect x={5} y={135} width={75} height={60} rx={4}
+        fill="#10b981" fillOpacity={0.07} stroke="#10b981" strokeOpacity={0.25} strokeWidth={0.6} />
+      <text x={43} y={154} fontSize={5} fill="#10b981" fillOpacity={0.6} textAnchor="middle" fontFamily="system-ui">STORAGE</text>
+      {/* グリッド線 */}
+      {lines}
+    </g>
+  );
 }
 
 /** フロー未取得中の待機表示 */
@@ -151,7 +164,7 @@ export function MovementMap({ guidance, risk, frameNumber, streaming, flowPos }:
               ? "bg-emerald-950/50 text-emerald-400 border border-emerald-800"
               : "bg-gray-900 text-gray-600 border border-gray-800"
           }`}>
-            {hasFlow ? "Optical Flow" : "待機中"}
+            {hasFlow ? "Gemini+Flow" : "待機中"}
           </span>
         </p>
         <span className="text-[10px] text-gray-600">{log.length}pt</span>
