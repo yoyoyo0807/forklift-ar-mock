@@ -104,21 +104,6 @@ function CurrentPosition({ point }: { point: MovementPoint }) {
 }
 
 /** 入口マーカー */
-function EntryMarker() {
-  const cx = MAP_SIZE / 2;
-  const cy = MAP_SIZE - 16;
-  return (
-    <g>
-      <polygon
-        points={`${cx},${cy - 6} ${cx - 4},${cy + 2} ${cx + 4},${cy + 2}`}
-        fill="#6366f1"
-        opacity={0.6}
-      />
-      <text x={cx + 6} y={cy + 2} fontSize={4} fill="#6366f1" fontFamily="system-ui">入口</text>
-    </g>
-  );
-}
-
 /** 倉庫グリッド背景 */
 function WarehouseGrid() {
   const gridStep = 25;
@@ -132,20 +117,23 @@ function WarehouseGrid() {
   return (
     <g>
       {lines}
-      {/* 棚エリア */}
-      {[
-        { x: 8,   y: 8,   label: "棚A" },
-        { x: 8,   y: 168, label: "棚B" },
-        { x: 152, y: 8,   label: "棚C" },
-        { x: 152, y: 168, label: "棚D" },
-      ].map(({ x, y, label }) => (
-        <g key={label}>
-          <rect x={x} y={y} width={40} height={20} rx={2} fill="#161d29" stroke="#2d3748" strokeWidth={0.6} />
-          <text x={x + 20} y={y + 12} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">{label}</text>
-        </g>
-      ))}
+      {/* 棚エリア（上部）— approach/pickup ウェイポイントと一致 */}
+      <rect x={8}   y={8} width={44} height={22} rx={2} fill="#161d29" stroke="#2d3748" strokeWidth={0.6} />
+      <text x={30}  y={21} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">棚A</text>
+      <rect x={148} y={8} width={44} height={22} rx={2} fill="#161d29" stroke="#2d3748" strokeWidth={0.6} />
+      <text x={170} y={21} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">棚C</text>
+
+      {/* トラック荷台（下部）— deliver ウェイポイントと一致 */}
+      <rect x={130} y={158} width={50} height={22} rx={2} fill="#1a1f2e" stroke="#374151" strokeWidth={0.6} strokeDasharray="3,2" />
+      <text x={155} y={172} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">🚚荷台</text>
+
+      {/* ベース（下部中央）— idle/return ウェイポイントと一致 */}
+      <circle cx={90} cy={170} r={6} fill="none" stroke="#374151" strokeWidth={0.6} strokeDasharray="2,2" />
+      <text x={90}  y={185} fontSize={4} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">BASE</text>
+
       {/* 中央通路ライン */}
-      <line x1={MAP_SIZE / 2} y1={0} x2={MAP_SIZE / 2} y2={MAP_SIZE} stroke="#1a2535" strokeWidth={1} strokeDasharray="3,4" />
+      <line x1={MAP_SIZE / 2} y1={0} x2={MAP_SIZE / 2} y2={MAP_SIZE}
+            stroke="#1a2535" strokeWidth={1} strokeDasharray="3,4" />
     </g>
   );
 }
@@ -185,7 +173,6 @@ export function MovementMap({ guidance, risk, frameNumber, streaming }: Props) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <WarehouseGrid />
-          <EntryMarker />
           <TrajectorySegments points={log} />
           <PhaseMarkers points={log} />
           {streaming && current && <CurrentPosition point={current} />}
