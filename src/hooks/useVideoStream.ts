@@ -5,6 +5,11 @@ import type { AlertEntry, GuidanceResult, MastInfo, NavInfo, OperatorState, Risk
 /** 切断後の自動再接続待機時間 */
 const RECONNECT_DELAY_MS = 4000;
 
+export interface FlowPos {
+  x: number;
+  y: number;
+}
+
 export interface StreamState {
   frame: string | null;        // base64 JPEG
   detections: Detection[];
@@ -18,6 +23,7 @@ export interface StreamState {
   alerts: AlertEntry[];
   navInfo: NavInfo | null;
   mastInfo: MastInfo | null;
+  flowPos: FlowPos | null;
 }
 
 interface Detection {
@@ -51,6 +57,7 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
     alerts: [],
     navInfo: null,
     mastInfo: null,
+    flowPos: null,
   });
 
   const wsRef              = useRef<WebSocket | null>(null);
@@ -134,6 +141,7 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
             alerts:        newAlerts,
             navInfo:       msg.nav_info  ?? s.navInfo,
             mastInfo:      msg.mast_info ?? s.mastInfo,
+            flowPos:       msg.flow_pos  ?? s.flowPos,
           };
         });
       }

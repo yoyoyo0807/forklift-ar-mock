@@ -2,7 +2,8 @@
 import { useMemo } from "react";
 import { Navigation } from "lucide-react";
 import { useMovementLog, MAP_SIZE, type MovementPoint } from "@/hooks/useMovementLog";
-import type { GuidanceResult, NavDirection, NavPhase, RiskLevel } from "@/types";
+import type { FlowPos } from "@/hooks/useVideoStream";
+import type { GuidanceResult, NavPhase, RiskLevel } from "@/types";
 
 const RISK_COLOR: Record<RiskLevel, string> = {
   safe:     "#10b981",
@@ -26,18 +27,7 @@ const PHASE_COLOR: Partial<Record<NavPhase, string>> = {
   carry:    "#3b82f6",
   deliver:  "#f59e0b",
   return:   "#8b5cf6",
-};
-
-const DIR_LABELS: Partial<Record<NavDirection, string>> = {
-  forward:       "前進",
-  reverse:       "後退",
-  left:          "左",
-  right:         "右",
-  forward_left:  "左前",
-  forward_right: "右前",
-  reverse_left:  "左後",
-  reverse_right: "右後",
-  stop:          "停止",
+  idle:     "#6b7280",
 };
 
 /** リスクカラーで色分けされたセグメント群 */
@@ -55,7 +45,7 @@ function TrajectorySegments({ points }: { points: MovementPoint[] }) {
             stroke={RISK_COLOR[p.risk]}
             strokeWidth={1.8}
             strokeLinecap="round"
-            opacity={0.75}
+            opacity={0.8}
           />
         );
       })}
@@ -94,8 +84,8 @@ function CurrentPosition({ point }: { point: MovementPoint }) {
   return (
     <g>
       <circle cx={point.x} cy={point.y} r={7} fill={color} opacity={0.15}>
-        <animate attributeName="r"       values="7;14;7"       dur="1.5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.15;0;0.15"  dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="r"       values="7;14;7"      dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0;0.15" dur="1.5s" repeatCount="indefinite" />
       </circle>
       <circle cx={point.x} cy={point.y} r={4} fill={color} />
       <circle cx={point.x} cy={point.y} r={2} fill="white"  />
@@ -103,37 +93,30 @@ function CurrentPosition({ point }: { point: MovementPoint }) {
   );
 }
 
-/** 入口マーカー */
 /** 倉庫グリッド背景 */
 function WarehouseGrid() {
-  const gridStep = 25;
   const lines: React.ReactNode[] = [];
-  for (let i = gridStep; i < MAP_SIZE; i += gridStep) {
+  for (let i = 25; i < MAP_SIZE; i += 25) {
     lines.push(
       <line key={`h${i}`} x1={0} y1={i} x2={MAP_SIZE} y2={i} stroke="#1f2937" strokeWidth={0.4} />,
       <line key={`v${i}`} x1={i} y1={0} x2={i} y2={MAP_SIZE} stroke="#1f2937" strokeWidth={0.4} />,
     );
   }
+  return <g>{lines}</g>;
+}
+
+/** フロー未取得中の待機表示 */
+function WaitingOverlay() {
   return (
     <g>
-      {lines}
-      {/* 棚エリア（上部）— approach/pickup ウェイポイントと一致 */}
-      <rect x={8}   y={8} width={44} height={22} rx={2} fill="#161d29" stroke="#2d3748" strokeWidth={0.6} />
-      <text x={30}  y={21} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">棚A</text>
-      <rect x={148} y={8} width={44} height={22} rx={2} fill="#161d29" stroke="#2d3748" strokeWidth={0.6} />
-      <text x={170} y={21} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">棚C</text>
-
-      {/* トラック荷台（下部）— deliver ウェイポイントと一致 */}
-      <rect x={130} y={158} width={50} height={22} rx={2} fill="#1a1f2e" stroke="#374151" strokeWidth={0.6} strokeDasharray="3,2" />
-      <text x={155} y={172} fontSize={5} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">🚚荷台</text>
-
-      {/* ベース（下部中央）— idle/return ウェイポイントと一致 */}
-      <circle cx={90} cy={170} r={6} fill="none" stroke="#374151" strokeWidth={0.6} strokeDasharray="2,2" />
-      <text x={90}  y={185} fontSize={4} fill="#4b5563" textAnchor="middle" fontFamily="system-ui">BASE</text>
-
-      {/* 中央通路ライン */}
-      <line x1={MAP_SIZE / 2} y1={0} x2={MAP_SIZE / 2} y2={MAP_SIZE}
-            stroke="#1a2535" strokeWidth={1} strokeDasharray="3,4" />
+      <text x={MAP_SIZE / 2} y={MAP_SIZE / 2 - 8} fontSize={9}
+            fill="#4b5563" textAnchor="middle" fontFamily="system-ui">
+        フロー解析中...
+      </text>
+      <text x={MAP_SIZE / 2} y={MAP_SIZE / 2 + 8} fontSize={7}
+            fill="#374151" textAnchor="middle" fontFamily="system-ui">
+        起動後 30s 程度で表示されます
+      </text>
     </g>
   );
 }
@@ -143,16 +126,18 @@ interface Props {
   risk: RiskLevel;
   frameNumber: number;
   streaming: boolean;
+  flowPos: FlowPos | null;
 }
 
-export function MovementMap({ guidance, risk, frameNumber, streaming }: Props) {
-  const log     = useMovementLog(guidance, risk, frameNumber);
-  const current = log[log.length - 1];
-  const dir     = guidance?.nav_direction ?? "stop";
+export function MovementMap({ guidance, risk, frameNumber, streaming, flowPos }: Props) {
+  const navPhase = guidance?.nav_phase;
+  const log      = useMovementLog(flowPos, risk, navPhase, frameNumber);
+  const current  = log[log.length - 1];
 
   const dangerCount = useMemo(() => log.filter(p => p.risk === "critical").length, [log]);
   const warnCount   = useMemo(() => log.filter(p => p.risk === "warning").length,  [log]);
-  const stopCount   = 0; // 停止中は点を追加しないため集計外
+
+  const hasFlow = flowPos !== null;
 
   return (
     <div className="bg-surface rounded-xl border border-border-default p-4 flex flex-col gap-3">
@@ -161,6 +146,13 @@ export function MovementMap({ guidance, risk, frameNumber, streaming }: Props) {
         <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
           <Navigation size={10} />
           走行軌跡マップ
+          <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${
+            hasFlow
+              ? "bg-emerald-950/50 text-emerald-400 border border-emerald-800"
+              : "bg-gray-900 text-gray-600 border border-gray-800"
+          }`}>
+            {hasFlow ? "Optical Flow" : "待機中"}
+          </span>
         </p>
         <span className="text-[10px] text-gray-600">{log.length}pt</span>
       </div>
@@ -173,30 +165,39 @@ export function MovementMap({ guidance, risk, frameNumber, streaming }: Props) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <WarehouseGrid />
-          <TrajectorySegments points={log} />
-          <PhaseMarkers points={log} />
-          {streaming && current && <CurrentPosition point={current} />}
+          {!hasFlow && <WaitingOverlay />}
+          {hasFlow && (
+            <>
+              <TrajectorySegments points={log} />
+              <PhaseMarkers points={log} />
+              {streaming && current && <CurrentPosition point={current} />}
+            </>
+          )}
         </svg>
       </div>
 
-      {/* 方向 & フェーズ */}
+      {/* フェーズ表示 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-gray-500">動き</span>
-          <span className="text-xs font-semibold text-gray-200">{DIR_LABELS[dir] ?? dir}</span>
+          <span className="text-[10px] text-gray-500">フェーズ</span>
+          {navPhase ? (
+            <span
+              className="text-[10px] px-2 py-0.5 rounded-full border font-medium"
+              style={{
+                color:           PHASE_COLOR[navPhase] ?? "#94a3b8",
+                borderColor:     PHASE_COLOR[navPhase] ?? "#374151",
+                backgroundColor: `${PHASE_COLOR[navPhase] ?? "#374151"}20`,
+              }}
+            >
+              {PHASE_LABEL[navPhase] ?? navPhase}
+            </span>
+          ) : (
+            <span className="text-[10px] text-gray-700">—</span>
+          )}
         </div>
-        {guidance?.nav_phase && (
-          <span
-            className="text-[10px] px-2 py-0.5 rounded-full border font-medium"
-            style={{
-              color:            PHASE_COLOR[guidance.nav_phase] ?? "#94a3b8",
-              borderColor:      PHASE_COLOR[guidance.nav_phase] ?? "#374151",
-              backgroundColor: `${PHASE_COLOR[guidance.nav_phase] ?? "#374151"}20`,
-            }}
-          >
-            {PHASE_LABEL[guidance.nav_phase] ?? guidance.nav_phase}
-          </span>
-        )}
+        <span className="text-[10px] text-gray-700">
+          {guidance?.guidance ?? ""}
+        </span>
       </div>
 
       {/* 統計 */}
