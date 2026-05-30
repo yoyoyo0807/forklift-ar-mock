@@ -18,14 +18,15 @@ export const MAP_SIZE = 200;
 // TRUCK ゾーン(165,22) が右上、STORAGE(38,168) が左下の 200×200 マップ。
 // SVG は y 下向き。theta=0 → 上向き（y 減少）、theta 増加 → 時計回り。
 //
-// INITIAL_THETA = 0.69 rad の根拠:
-//   動画開始時はトラック横付け位置 → 90°左×2回 = 合計 180° 旋回後に
-//   STORAGE 方向を向く。0.69 − π ≈ −2.45 rad が TRUCK→STORAGE 方位角と一致。
+// INITIAL_THETA = -0.87 rad の根拠（実動画光学フロー解析によるキャリブレーション）:
+//   実際のyaw積分 Δθ ≈ -1.50 rad が INITIAL_THETA に加算される結果、
+//   搬送フェーズ(carry) で theta ≈ -2.37 rad（左斜め下 = STORAGE 方位角）になる。
+//   -0.87 + (-1.50) = -2.37 ≈ TRUCK→STORAGE の方位角 atan2(130,-114) ≈ -2.34
 //
-// スケール係数は実際の軌跡と比較しながら調整する。
-const INITIAL_X     = 155.0;  // 初期 X（TRUCK ゾーン付近）
-const INITIAL_Y     = 40.0;   // 初期 Y（TRUCK ゾーン付近）
-const INITIAL_THETA = 0.69;   // 初期進行方向（TRUCK 正面の少し横向き）
+// スケール係数は動画フロー解析（Farneback、INTERVAL=5）に基づく。
+const INITIAL_X     = 180.0;  // 初期 X（TRUCK ゾーン内）
+const INITIAL_Y     = 48.0;   // 初期 Y（TRUCK ゾーン内）
+const INITIAL_THETA = -0.87;  // 初期進行方向（キャリブ済み：搬送フェーズで theta≈-2.45 になる値）
 const YAW_SCALE     = 0.15;   // ヨー係数（90°旋回で合計yaw≈10 → π/2 ÷ 10 ≈ 0.157）
 const FORWARD_SCALE = 100.0;  // 前進係数（搬送フェーズ合計fwd≈1.76 / TRUCK→STORAGE 193px ≈ 110）
 const MIN_STEP      = 0.3;    // 記録最小移動量（px）
