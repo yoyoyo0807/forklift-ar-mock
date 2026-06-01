@@ -206,6 +206,7 @@ export function ForkliftDashboard() {
               frameNumber={stream.frameNumber}
               streaming={isConnected}
               flowSignal={stream.flowSignal}
+              opticalPos={stream.opticalPos}
             />
 
             {/* 積載ナビ */}

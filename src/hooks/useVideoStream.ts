@@ -30,6 +30,8 @@ export interface StreamState {
   navInfo: NavInfo | null;
   mastInfo: MastInfo | null;
   flowPos: FlowPos | null;
+  /** LK スパース光学フロー追跡による絶対位置（Gemini 不要・常に利用可能） */
+  opticalPos: FlowPos | null;
   flowSignal: FlowSignal | null;
 }
 
@@ -65,6 +67,7 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
     navInfo: null,
     mastInfo: null,
     flowPos: null,
+    opticalPos: null,
     flowSignal: null,
   });
 
@@ -149,8 +152,9 @@ export function useVideoStream(): StreamState & { connect: () => void; disconnec
             alerts:        newAlerts,
             navInfo:       msg.nav_info  ?? s.navInfo,
             mastInfo:      msg.mast_info ?? s.mastInfo,
-            flowPos:       msg.flow_pos    ?? s.flowPos,
-            flowSignal:    (msg.flow_signal as FlowSignal | null | undefined) ?? null,
+            flowPos:       msg.flow_pos     ?? s.flowPos,
+            opticalPos:    (msg.optical_pos as FlowPos | null | undefined) ?? null,
+            flowSignal:    (msg.flow_signal  as FlowSignal | null | undefined) ?? null,
           };
         });
       }
