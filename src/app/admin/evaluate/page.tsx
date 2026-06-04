@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-  Star, TrendingUp, TrendingDown, RefreshCw, ArrowLeft, AlertCircle, ClipboardList,
+  Star, TrendingUp, TrendingDown, RefreshCw, ArrowLeft, AlertCircle, ClipboardList, Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -12,6 +12,9 @@ const API_BASE: string = (() => {
   if (ws) return ws.replace(/^ws/, "http").replace(/\/ws\/.*/, "");
   return "";
 })();
+
+// バックエンド未設定（Vercel等のホスト型環境で localhost:8000 に到達不可）
+const BACKEND_CONFIGURED = API_BASE !== "";
 
 // ---- 型定義 ----------------------------------------------------------------
 
@@ -358,6 +361,10 @@ export default function EvaluatePage() {
   const [error,     setError]     = useState<string | null>(null);
 
   const load = async () => {
+    if (!BACKEND_CONFIGURED) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -447,13 +454,35 @@ export default function EvaluatePage() {
           </div>
         )}
 
+        {/* バックエンド未接続（ホスト型環境）— 親切な案内 */}
+        {!BACKEND_CONFIGURED && (
+          <div className="rounded-xl border border-indigo-800/50 bg-indigo-950/20 p-6 space-y-3">
+            <p className="text-sm font-semibold text-indigo-200">
+              このビューはローカルのバックエンドが必要です
+            </p>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              オペレーター評価は Gemini 解析バックエンド（<code className="text-indigo-300">localhost:8000</code>）に接続して動作します。
+              この公開環境ではバックエンドが稼働していないため表示できません。
+              <br />
+              最適化シミュレーションの結果は、バックエンド不要で「最適化」タブからご覧いただけます。
+            </p>
+            <Link
+              href="/admin/optimization"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white transition-colors"
+            >
+              <Sparkles size={12} />
+              最適化シミュレーションを見る
+            </Link>
+          </div>
+        )}
+
         {/* ローディング */}
-        {loading && (
+        {BACKEND_CONFIGURED && loading && (
           <div className="text-center text-sm text-gray-500 py-12">評価データを取得中...</div>
         )}
 
         {/* エラー */}
-        {!loading && error && (
+        {BACKEND_CONFIGURED && !loading && error && (
           <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400">
             バックエンドに接続できません: {error}
           </div>
