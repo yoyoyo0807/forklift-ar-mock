@@ -1,13 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Activity, RefreshCw, Star } from "lucide-react";
+import { Activity, ClipboardList, RefreshCw, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 
+// admin ページはローカル専用 — localhost では常にバックエンド直接接続
 const API_BASE: string = (() => {
   if (typeof window === "undefined") return "http://localhost:8000";
+  if (window.location.hostname === "localhost") return "http://localhost:8000";
   const ws = process.env.NEXT_PUBLIC_WS_URL;
   if (ws) return ws.replace(/^ws/, "http").replace(/\/ws\/.*/, "");
-  return window.location.hostname === "localhost" ? "http://localhost:8000" : "";
+  return "";
 })();
 
 interface TrajectoryPoint {
@@ -62,6 +64,19 @@ function ForkliftOverlay({
   frameH: number;
   currentFrame: number;
 }) {
+  // 再生中: 現在フレームまでのサンプルを使用、停止中: 全サンプル
+  const RECENT_FRAMES = 600;  // 直近20秒分の軌跡をハイライト
+  const MARKER_TIMEOUT = 300;
+
+  function toPts(samples: TrajectoryPoint[]): string {
+    return samples
+      .map((s) => {
+        const [px, py] = mapToPixel(s.x, s.y, transform);
+        return `${px.toFixed(1)},${py.toFixed(1)}`;
+      })
+      .join(" ");
+  }
+
   return (
     <svg
       viewBox={`0 0 ${frameW} ${frameH}`}
@@ -69,55 +84,61 @@ function ForkliftOverlay({
       xmlns="http://www.w3.org/2000/svg"
     >
       {forklifts.map((fk) => {
-        // 再生中は現在フレームまで、停止中（frame=0）は全軌跡を表示
+        // 現在フレームまでのサンプル（再生中）or 全サンプル（停止中）
         const visible = currentFrame > 0
           ? fk.samples.filter((s) => s.frame <= currentFrame)
           : fk.samples;
         if (visible.length < 2) return null;
 
-        // 末尾300フレーム分の軌跡のみ描画（古い軌跡は非表示）
-        const TRAIL_FRAMES = 300;
-        const trail = currentFrame > 0
-          ? visible.filter((s) => s.frame >= currentFrame - TRAIL_FRAMES)
+        // 全軌跡（背景に薄く表示）
+        const allPts = toPts(visible);
+
+        // 直近 RECENT_FRAMES の軌跡（太くハイライト）
+        const recentSamples = currentFrame > 0
+          ? visible.filter((s) => s.frame >= currentFrame - RECENT_FRAMES)
           : visible;
-        const trailPts = (trail.length >= 2 ? trail : visible)
-          .map((s) => {
-            const [px, py] = mapToPixel(s.x, s.y, transform);
-            return `${px.toFixed(1)},${py.toFixed(1)}`;
-          })
-          .join(" ");
+        const recentPts = toPts(recentSamples.length >= 2 ? recentSamples : visible);
 
         const last = visible[visible.length - 1];
         const [lx, ly] = mapToPixel(last.x, last.y, transform);
         const first = visible[0];
         const [fx, fy] = mapToPixel(first.x, first.y, transform);
 
-        // 現在フレームから300フレーム以上離れたらマーカーを非表示（ゴースト防止）
-        const MARKER_TIMEOUT = 300;
         const isActive = currentFrame === 0 || (currentFrame - last.frame) < MARKER_TIMEOUT;
 
         return (
           <g key={fk.id}>
-            {/* 軌跡（末尾300フレーム分のみ） */}
+            {/* ① 全軌跡 — 薄いライン（全体の動線を常時表示） */}
             <polyline
-              points={trailPts}
+              points={allPts}
               fill="none"
               stroke={fk.color}
-              strokeWidth={3}
+              strokeWidth={1.5}
               strokeLinecap="round"
               strokeLinejoin="round"
-              opacity={0.75}
+              opacity={0.3}
             />
-            {/* スタートマーカー（静止表示のみ） */}
+            {/* ② 直近軌跡 — 太いライン（最近の動きをハイライト） */}
+            {recentSamples.length >= 2 && (
+              <polyline
+                points={recentPts}
+                fill="none"
+                stroke={fk.color}
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.85}
+              />
+            )}
+            {/* ③ スタートマーカー（静止表示のみ） */}
             {currentFrame === 0 && (
               <rect x={fx - 5} y={fy - 5} width={10} height={10} rx={2} fill={fk.color} opacity={0.9} />
             )}
-            {/* 現在位置マーカー（アクティブな間のみ表示） */}
+            {/* ④ 現在位置マーカー */}
             {isActive && (
               <>
                 <circle cx={lx} cy={ly} r={8} fill={fk.color} opacity={0.9} />
                 <circle cx={lx} cy={ly} r={4} fill="white" opacity={0.9} />
-                {/* ID ラベル */}
                 <text
                   x={lx + 12}
                   y={ly + 4}
@@ -204,6 +225,20 @@ export default function AdminPage() {
               <Star size={11} />
               評価
             </Link>
+            <Link
+              href="/admin/instructions"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-900/50 hover:bg-indigo-800/60 rounded-lg border border-indigo-700/50 text-indigo-300 transition-colors"
+            >
+              <ClipboardList size={11} />
+              指示
+            </Link>
+            <Link
+              href="/admin/optimization"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-900/50 hover:bg-indigo-800/60 rounded-lg border border-indigo-700/50 text-indigo-300 transition-colors"
+            >
+              <Sparkles size={11} />
+              最適化
+            </Link>
             <button
               onClick={() => load().catch(() => {})}
               disabled={loading}
@@ -231,8 +266,11 @@ export default function AdminPage() {
               {/* 動画 */}
               <video
                 ref={videoRef}
-                src={`${API_BASE}/admin/video`}
+                src="/forklift_video.mp4"
                 controls
+                autoPlay
+                muted
+                loop
                 className="w-full h-full object-contain"
                 playsInline
               />
