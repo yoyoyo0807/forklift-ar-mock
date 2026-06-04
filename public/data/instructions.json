@@ -1,0 +1,1039 @@
+{
+  "ready": true,
+  "generated_at": "2026-06-01T09:42:19Z",
+  "instructions": [
+    {
+      "forklift_id": "FK4",
+      "grade": "D",
+      "initial_delay_sec": 0.0,
+      "delay_reason": "",
+      "total_estimated_distance_px": 5652.4,
+      "priority_order": [
+        {
+          "step": 1,
+          "slot": 14,
+          "color": "orange",
+          "source_row": 3,
+          "source_col": 2,
+          "instruction_ja": "row3-col2のorangeをslot14へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 724.3,
+              "y": 669.7,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 669.7,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 207.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 207.0,
+              "y": 405.0,
+              "action": "pick"
+            },
+            {
+              "x": 207.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 1232.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 1232.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 3381.4,
+          "start_t": 0.0,
+          "end_t": 43.6,
+          "duration_sec": 43.6
+        },
+        {
+          "step": 2,
+          "slot": 13,
+          "color": "red",
+          "source_row": 0,
+          "source_col": 2,
+          "instruction_ja": "row0-col2のredをslot13へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 1232.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 207.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 207.0,
+              "y": 184.0,
+              "action": "pick"
+            },
+            {
+              "x": 207.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 1165.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 1165.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 2271.0,
+          "start_t": 43.6,
+          "end_t": 73.3,
+          "duration_sec": 29.699999999999996
+        }
+      ]
+    },
+    {
+      "forklift_id": "FK1",
+      "grade": "C",
+      "initial_delay_sec": 3.4,
+      "delay_reason": "衝突回避（安全距離確保）のため 3.4秒 待機してから開始",
+      "total_estimated_distance_px": 7672.8,
+      "priority_order": [
+        {
+          "step": 1,
+          "slot": 12,
+          "color": "gray",
+          "source_row": 4,
+          "source_col": 1,
+          "instruction_ja": "row4-col1のgrayをslot12へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 648.4,
+              "y": 665.2,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 665.2,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 494.0,
+              "action": "pick"
+            },
+            {
+              "x": 137.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 1098.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 1098.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 3056.8,
+          "start_t": 3.4,
+          "end_t": 42.9,
+          "duration_sec": 39.5
+        },
+        {
+          "step": 2,
+          "slot": 11,
+          "color": "green",
+          "source_row": 2,
+          "source_col": 2,
+          "instruction_ja": "row2-col2のgreenをslot11へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 1098.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 207.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 207.0,
+              "y": 339.0,
+              "action": "pick"
+            },
+            {
+              "x": 207.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 932.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 932.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 2652.0,
+          "start_t": 42.9,
+          "end_t": 77.4,
+          "duration_sec": 34.50000000000001
+        },
+        {
+          "step": 3,
+          "slot": 7,
+          "color": "blue",
+          "source_row": 1,
+          "source_col": 1,
+          "instruction_ja": "row1-col1のblueをslot7へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 932.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 747.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 747.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 251.0,
+              "action": "pick"
+            },
+            {
+              "x": 137.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 610.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 610.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1964.0,
+          "start_t": 77.4,
+          "end_t": 103.2,
+          "duration_sec": 25.799999999999997
+        }
+      ]
+    },
+    {
+      "forklift_id": "FK3",
+      "grade": "B",
+      "initial_delay_sec": 5.0,
+      "delay_reason": "衝突回避（安全距離確保）のため 16.2秒 待機してから開始",
+      "total_estimated_distance_px": 7466.5,
+      "priority_order": [
+        {
+          "step": 1,
+          "slot": 10,
+          "color": "yellow",
+          "source_row": 5,
+          "source_col": 8,
+          "instruction_ja": "row5-col8のyellowをslot10へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 586.2,
+              "y": 669.7,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 669.7,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 639.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 639.0,
+              "y": 558.0,
+              "action": "pick"
+            },
+            {
+              "x": 639.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 747.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 747.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 865.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 865.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1904.5,
+          "start_t": 5.0,
+          "end_t": 30.1,
+          "duration_sec": 25.1
+        },
+        {
+          "step": 2,
+          "slot": 9,
+          "color": "orange",
+          "source_row": 3,
+          "source_col": 1,
+          "instruction_ja": "row3-col1のorangeをslot9へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 865.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 747.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 747.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 405.0,
+              "action": "pick"
+            },
+            {
+              "x": 137.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 798.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 798.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 2393.0,
+          "start_t": 30.1,
+          "end_t": 61.3,
+          "duration_sec": 31.199999999999996
+        },
+        {
+          "step": 3,
+          "slot": 8,
+          "color": "red",
+          "source_row": 0,
+          "source_col": 1,
+          "instruction_ja": "row0-col1のredをslot8へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 798.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 747.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 747.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 184.0,
+              "action": "pick"
+            },
+            {
+              "x": 137.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 677.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 677.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1489.0,
+          "start_t": 61.3,
+          "end_t": 81.2,
+          "duration_sec": 19.900000000000006
+        },
+        {
+          "step": 4,
+          "slot": 6,
+          "color": "green",
+          "source_row": 2,
+          "source_col": 1,
+          "instruction_ja": "row2-col1のgreenをslot6へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 677.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 747.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 747.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 137.0,
+              "y": 339.0,
+              "action": "pick"
+            },
+            {
+              "x": 137.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 543.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 543.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1680.0,
+          "start_t": 81.2,
+          "end_t": 103.5,
+          "duration_sec": 22.299999999999997
+        }
+      ]
+    },
+    {
+      "forklift_id": "FK5",
+      "grade": "B",
+      "initial_delay_sec": 10.0,
+      "delay_reason": "衝突回避（安全距離確保）のため 10.0秒 待機してから開始",
+      "total_estimated_distance_px": 5321.3,
+      "priority_order": [
+        {
+          "step": 1,
+          "slot": 5,
+          "color": "yellow",
+          "source_row": 5,
+          "source_col": 3,
+          "instruction_ja": "row5-col3のyellowをslot5へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 510.0,
+              "y": 661.3,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 661.3,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 277.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 277.0,
+              "y": 558.0,
+              "action": "pick"
+            },
+            {
+              "x": 277.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 597.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 422.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 422.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 2253.3,
+          "start_t": 10.0,
+          "end_t": 39.5,
+          "duration_sec": 29.5
+        },
+        {
+          "step": 2,
+          "slot": 4,
+          "color": "orange",
+          "source_row": 3,
+          "source_col": 0,
+          "instruction_ja": "row3-col0のorangeをslot4へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 422.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 390.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 405.0,
+              "action": "pick"
+            },
+            {
+              "x": 69.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 449.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 355.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 355.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1507.0,
+          "start_t": 39.5,
+          "end_t": 59.6,
+          "duration_sec": 20.1
+        },
+        {
+          "step": 3,
+          "slot": 1,
+          "color": "green",
+          "source_row": 2,
+          "source_col": 0,
+          "instruction_ja": "row2-col0のgreenをslot1へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 355.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 390.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 339.0,
+              "action": "pick"
+            },
+            {
+              "x": 69.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 372.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 100.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 100.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1561.0,
+          "start_t": 59.6,
+          "end_t": 80.4,
+          "duration_sec": 20.800000000000004
+        }
+      ]
+    },
+    {
+      "forklift_id": "FK2",
+      "grade": "A",
+      "initial_delay_sec": 10.7,
+      "delay_reason": "衝突回避（安全距離確保）のため 10.7秒 待機してから開始",
+      "total_estimated_distance_px": 4752.8,
+      "priority_order": [
+        {
+          "step": 1,
+          "slot": 3,
+          "color": "blue",
+          "source_row": 1,
+          "source_col": 0,
+          "instruction_ja": "row1-col0のblueをslot3へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 459.7,
+              "y": 663.5,
+              "action": "start"
+            },
+            {
+              "x": 1132.0,
+              "y": 663.5,
+              "action": "move"
+            },
+            {
+              "x": 1132.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 251.0,
+              "action": "pick"
+            },
+            {
+              "x": 69.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 295.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 288.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 288.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 2695.8,
+          "start_t": 10.7,
+          "end_t": 45.7,
+          "duration_sec": 35.0
+        },
+        {
+          "step": 2,
+          "slot": 2,
+          "color": "gray",
+          "source_row": 4,
+          "source_col": 0,
+          "instruction_ja": "row4-col0のgrayをslot2へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 288.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 390.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 390.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 494.0,
+              "action": "pick"
+            },
+            {
+              "x": 69.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 524.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 167.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 167.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 1511.0,
+          "start_t": 45.7,
+          "end_t": 65.9,
+          "duration_sec": 20.200000000000003
+        },
+        {
+          "step": 3,
+          "slot": 0,
+          "color": "red",
+          "source_row": 0,
+          "source_col": 0,
+          "instruction_ja": "row0-col0のredをslot0へ運搬してください",
+          "reason": "QUBO最適化（makespan最小・衝突0）による割当・経路",
+          "route_waypoints": [
+            {
+              "x": 167.0,
+              "y": 108.0,
+              "action": "start"
+            },
+            {
+              "x": 20.0,
+              "y": 108.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 69.0,
+              "y": 184.0,
+              "action": "pick"
+            },
+            {
+              "x": 69.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 218.0,
+              "action": "move"
+            },
+            {
+              "x": 20.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 33.0,
+              "y": 154.0,
+              "action": "move"
+            },
+            {
+              "x": 33.0,
+              "y": 108.0,
+              "action": "drop"
+            }
+          ],
+          "estimated_distance_px": 546.0,
+          "start_t": 65.9,
+          "end_t": 74.0,
+          "duration_sec": 8.099999999999994
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "type": "missing_inventory",
+      "color": "cyan",
+      "affected_slots": [
+        5,
+        10
+      ],
+      "message": "cyanコンテナの在庫がありません。slot5・slot10は積載不可です"
+    }
+  ],
+  "summary": "全15スロット中13スロットへの作業指示を生成。残り2スロット（cyan）は在庫不足のため保留。",
+  "execution_note": "QUBO+SA 最適化スケジュール（makespan最小・衝突0保証）"
+}

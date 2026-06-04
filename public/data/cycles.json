@@ -1,0 +1,185 @@
+{
+  "ready": true,
+  "generated_at": "2026-06-01T08:34:56Z",
+  "global_benchmark": {
+    "avg_cycle_sec": 7.5,
+    "total_cycles": 49
+  },
+  "forklifts": [
+    {
+      "id": "FK1",
+      "summary": {
+        "forklift_id": "FK1",
+        "observation_sec": 133.8,
+        "cycle_count": 9,
+        "avg_cycle_sec": 9.2,
+        "min_cycle_sec": 3.8,
+        "max_cycle_sec": 12.5,
+        "stddev_cycle_sec": 2.6,
+        "avg_route_efficiency": 0.506,
+        "avg_stop_duration_sec": 2.7,
+        "idle_ratio": 0.382,
+        "dominant_zone": "LOADING_ZONE",
+        "zone_counts": {
+          "DEPOT": 168,
+          "GRID": 168,
+          "LOADING_ZONE": 469
+        },
+        "zone_transitions": {
+          "DEPOT→GRID": 1,
+          "GRID→LOADING_ZONE": 3,
+          "LOADING_ZONE→GRID": 2,
+          "LOADING_ZONE→LOADING_ZONE": 2,
+          "GRID→GRID": 1
+        },
+        "flags": {
+          "high_idle": false,
+          "low_efficiency": true,
+          "slow_cycles": false,
+          "inconsistent": false,
+          "no_cycles": false
+        }
+      }
+    },
+    {
+      "id": "FK2",
+      "summary": {
+        "forklift_id": "FK2",
+        "observation_sec": 133.8,
+        "cycle_count": 13,
+        "avg_cycle_sec": 7.0,
+        "min_cycle_sec": 1.5,
+        "max_cycle_sec": 18.0,
+        "stddev_cycle_sec": 4.9,
+        "avg_route_efficiency": 0.735,
+        "avg_stop_duration_sec": 2.1,
+        "idle_ratio": 0.319,
+        "dominant_zone": "LOADING_ZONE",
+        "zone_counts": {
+          "DEPOT": 131,
+          "GRID": 222,
+          "LOADING_ZONE": 452
+        },
+        "zone_transitions": {
+          "DEPOT→DEPOT": 1,
+          "GRID→LOADING_ZONE": 3,
+          "LOADING_ZONE→LOADING_ZONE": 7,
+          "LOADING_ZONE→GRID": 2
+        },
+        "flags": {
+          "high_idle": false,
+          "low_efficiency": false,
+          "slow_cycles": false,
+          "inconsistent": false,
+          "no_cycles": false
+        }
+      }
+    },
+    {
+      "id": "FK3",
+      "summary": {
+        "forklift_id": "FK3",
+        "observation_sec": 133.8,
+        "cycle_count": 10,
+        "avg_cycle_sec": 7.2,
+        "min_cycle_sec": 1.8,
+        "max_cycle_sec": 14.5,
+        "stddev_cycle_sec": 4.2,
+        "avg_route_efficiency": 0.651,
+        "avg_stop_duration_sec": 2.3,
+        "idle_ratio": 0.466,
+        "dominant_zone": "LOADING_ZONE",
+        "zone_counts": {
+          "DEPOT": 230,
+          "GRID": 82,
+          "LOADING_ZONE": 493
+        },
+        "zone_transitions": {
+          "DEPOT→GRID": 2,
+          "GRID→LOADING_ZONE": 2,
+          "LOADING_ZONE→LOADING_ZONE": 4,
+          "LOADING_ZONE→DEPOT": 1,
+          "DEPOT→DEPOT": 1
+        },
+        "flags": {
+          "high_idle": true,
+          "low_efficiency": false,
+          "slow_cycles": false,
+          "inconsistent": false,
+          "no_cycles": false
+        }
+      }
+    },
+    {
+      "id": "FK4",
+      "summary": {
+        "forklift_id": "FK4",
+        "observation_sec": 133.8,
+        "cycle_count": 7,
+        "avg_cycle_sec": 8.3,
+        "min_cycle_sec": 3.3,
+        "max_cycle_sec": 19.5,
+        "stddev_cycle_sec": 5.8,
+        "avg_route_efficiency": 0.689,
+        "avg_stop_duration_sec": 3.6,
+        "idle_ratio": 0.565,
+        "dominant_zone": "LOADING_ZONE",
+        "zone_counts": {
+          "DEPOT": 227,
+          "GRID": 159,
+          "LOADING_ZONE": 419
+        },
+        "zone_transitions": {
+          "DEPOT→GRID": 2,
+          "GRID→LOADING_ZONE": 2,
+          "LOADING_ZONE→GRID": 1,
+          "DEPOT→DEPOT": 1,
+          "LOADING_ZONE→LOADING_ZONE": 1
+        },
+        "flags": {
+          "high_idle": true,
+          "low_efficiency": false,
+          "slow_cycles": false,
+          "inconsistent": false,
+          "no_cycles": false
+        }
+      }
+    },
+    {
+      "id": "FK5",
+      "summary": {
+        "forklift_id": "FK5",
+        "observation_sec": 133.8,
+        "cycle_count": 10,
+        "avg_cycle_sec": 6.5,
+        "min_cycle_sec": 1.5,
+        "max_cycle_sec": 12.8,
+        "stddev_cycle_sec": 3.2,
+        "avg_route_efficiency": 0.689,
+        "avg_stop_duration_sec": 2.3,
+        "idle_ratio": 0.514,
+        "dominant_zone": "LOADING_ZONE",
+        "zone_counts": {
+          "DEPOT": 123,
+          "GRID": 210,
+          "LOADING_ZONE": 472
+        },
+        "zone_transitions": {
+          "DEPOT→DEPOT": 1,
+          "DEPOT→GRID": 1,
+          "GRID→LOADING_ZONE": 3,
+          "LOADING_ZONE→GRID": 2,
+          "GRID→GRID": 1,
+          "LOADING_ZONE→LOADING_ZONE": 2
+        },
+        "flags": {
+          "high_idle": true,
+          "low_efficiency": false,
+          "slow_cycles": false,
+          "inconsistent": false,
+          "no_cycles": false
+        }
+      }
+    }
+  ]
+}

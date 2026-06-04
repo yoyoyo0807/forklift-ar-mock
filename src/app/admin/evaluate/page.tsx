@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-  Star, TrendingUp, TrendingDown, RefreshCw, ArrowLeft, AlertCircle, ClipboardList, Sparkles,
+  Star, TrendingUp, TrendingDown, RefreshCw, ArrowLeft, AlertCircle, ClipboardList,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -15,6 +15,10 @@ const API_BASE: string = (() => {
 
 // バックエンド未設定（Vercel等のホスト型環境で localhost:8000 に到達不可）
 const BACKEND_CONFIGURED = API_BASE !== "";
+
+// バックエンド接続時は API、未接続時は同梱の静的JSON（/data/*.json）を読む
+const adminUrl = (path: string): string =>
+  BACKEND_CONFIGURED ? `${API_BASE}${path}` : `/data${path.replace("/admin", "")}.json`;
 
 // ---- 型定義 ----------------------------------------------------------------
 
@@ -173,7 +177,8 @@ function Minimap({
 }: {
   trajectory: ForkliftTrajectory | undefined;
 }) {
-  const snapshotUrl = `${API_BASE}/admin/snapshot`;
+  // 背景の実フレーム画像はバックエンド専用。未接続時は暗幕のみで描画する。
+  const snapshotUrl = BACKEND_CONFIGURED ? `${API_BASE}/admin/snapshot` : null;
 
   if (!trajectory || trajectory.samples.length < 2) {
     return (
@@ -207,14 +212,16 @@ function Minimap({
       className="rounded-lg border border-gray-700"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* 背景: 動画最終フレーム（コンテナ・棚の実際のレイアウト） */}
-      <image
-        href={snapshotUrl}
-        x={0} y={0}
-        width={MINIMAP_W}
-        height={MINIMAP_H}
-        preserveAspectRatio="xMidYMid slice"
-      />
+      {/* 背景: 動画最終フレーム（バックエンド接続時のみ） */}
+      {snapshotUrl && (
+        <image
+          href={snapshotUrl}
+          x={0} y={0}
+          width={MINIMAP_W}
+          height={MINIMAP_H}
+          preserveAspectRatio="xMidYMid slice"
+        />
+      )}
 
       {/* 暗幕（軌跡を見やすくする半透明オーバーレイ） */}
       <rect x={0} y={0} width={MINIMAP_W} height={MINIMAP_H} fill="#000" opacity={0.35} />
@@ -361,17 +368,13 @@ export default function EvaluatePage() {
   const [error,     setError]     = useState<string | null>(null);
 
   const load = async () => {
-    if (!BACKEND_CONFIGURED) {
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
       const [evalRes, cycleRes, trajRes] = await Promise.all([
-        fetch(`${API_BASE}/admin/evaluate`),
-        fetch(`${API_BASE}/admin/cycles`),
-        fetch(`${API_BASE}/admin/trajectory`),
+        fetch(adminUrl("/admin/evaluate")),
+        fetch(adminUrl("/admin/cycles")),
+        fetch(adminUrl("/admin/trajectory")),
       ]);
       if (!evalRes.ok) throw new Error(`evaluate: HTTP ${evalRes.status}`);
       setEvalData(await evalRes.json());
@@ -454,35 +457,13 @@ export default function EvaluatePage() {
           </div>
         )}
 
-        {/* バックエンド未接続（ホスト型環境）— 親切な案内 */}
-        {!BACKEND_CONFIGURED && (
-          <div className="rounded-xl border border-indigo-800/50 bg-indigo-950/20 p-6 space-y-3">
-            <p className="text-sm font-semibold text-indigo-200">
-              このビューはローカルのバックエンドが必要です
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              オペレーター評価は Gemini 解析バックエンド（<code className="text-indigo-300">localhost:8000</code>）に接続して動作します。
-              この公開環境ではバックエンドが稼働していないため表示できません。
-              <br />
-              最適化シミュレーションの結果は、バックエンド不要で「最適化」タブからご覧いただけます。
-            </p>
-            <Link
-              href="/admin/optimization"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white transition-colors"
-            >
-              <Sparkles size={12} />
-              最適化シミュレーションを見る
-            </Link>
-          </div>
-        )}
-
         {/* ローディング */}
-        {BACKEND_CONFIGURED && loading && (
+        {loading && (
           <div className="text-center text-sm text-gray-500 py-12">評価データを取得中...</div>
         )}
 
         {/* エラー */}
-        {BACKEND_CONFIGURED && !loading && error && (
+        {!loading && error && (
           <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400">
             バックエンドに接続できません: {error}
           </div>

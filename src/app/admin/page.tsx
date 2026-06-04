@@ -15,6 +15,10 @@ const API_BASE: string = (() => {
 // バックエンド未設定（Vercel等のホスト型環境で localhost:8000 に到達不可）
 const BACKEND_CONFIGURED = API_BASE !== "";
 
+// バックエンド接続時は API、未接続時は同梱の静的JSON（/data/*.json）を読む
+const adminUrl = (path: string): string =>
+  BACKEND_CONFIGURED ? `${API_BASE}${path}` : `/data${path.replace("/admin", "")}.json`;
+
 interface TrajectoryPoint {
   frame: number;
   x: number;
@@ -172,14 +176,10 @@ export default function AdminPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const load = async () => {
-    if (!BACKEND_CONFIGURED) {
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/admin/trajectory`);
+      const res = await fetch(adminUrl("/admin/trajectory"));
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json: MultiTrajectoryResponse = await res.json();
       setData(json);
@@ -293,30 +293,13 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* バックエンド未接続時の補足（動画は再生される。軌跡オーバーレイのみローカル限定） */}
-        {!BACKEND_CONFIGURED && (
-          <div className="rounded-lg border border-indigo-900/40 bg-indigo-950/20 px-4 py-3 flex items-center justify-between gap-3">
-            <p className="text-xs text-gray-400 leading-relaxed">
-              軌跡オーバーレイ・指示・評価はリアルタイム解析バックエンド（<code className="text-indigo-300">localhost:8000</code>）接続時に表示されます。
-              最適化シミュレーション結果はバックエンド不要でご覧いただけます。
-            </p>
-            <Link
-              href="/admin/optimization"
-              className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white transition-colors"
-            >
-              <Sparkles size={12} />
-              最適化を見る
-            </Link>
-          </div>
-        )}
-
         {/* ローディング */}
-        {BACKEND_CONFIGURED && loading && (
+        {loading && (
           <div className="text-center text-sm text-gray-500 py-12">読み込み中...</div>
         )}
 
         {/* エラー */}
-        {BACKEND_CONFIGURED && !loading && error && (
+        {!loading && error && (
           <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-400">
             バックエンドに接続できません: {error}
           </div>
