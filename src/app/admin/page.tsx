@@ -266,44 +266,22 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* バックエンド未接続（ホスト型環境）— 親切な案内 */}
-        {!BACKEND_CONFIGURED && (
-          <div className="rounded-xl border border-indigo-800/50 bg-indigo-950/20 p-6 space-y-3">
-            <p className="text-sm font-semibold text-indigo-200">
-              このビューはローカルのバックエンドが必要です
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              軌跡モニター・指示・評価はリアルタイム解析バックエンド（<code className="text-indigo-300">localhost:8000</code>）に接続して動作します。
-              この公開環境ではバックエンドが稼働していないため表示できません。
-              <br />
-              最適化シミュレーションの結果は、バックエンド不要で「最適化」タブからご覧いただけます。
-            </p>
-            <Link
-              href="/admin/optimization"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white transition-colors"
-            >
-              <Sparkles size={12} />
-              最適化シミュレーションを見る
-            </Link>
-          </div>
-        )}
-
-        {/* 動画 + SVG 重ねエリア */}
-        {data?.ready && transform && (
-          <div className="rounded-xl overflow-hidden border border-gray-800 bg-black">
-            <div className="relative" style={{ aspectRatio: `${frameW} / ${frameH}` }}>
-              {/* 動画 */}
-              <video
-                ref={videoRef}
-                src="/forklift_video.mp4"
-                controls
-                autoPlay
-                muted
-                loop
-                className="w-full h-full object-contain"
-                playsInline
-              />
-              {/* 軌跡オーバーレイ */}
+        {/* 動画 + SVG 重ねエリア — 動画は常時再生、軌跡オーバーレイはバックエンド接続時のみ */}
+        <div className="rounded-xl overflow-hidden border border-gray-800 bg-black">
+          <div className="relative" style={{ aspectRatio: `${frameW} / ${frameH}` }}>
+            {/* 動画 */}
+            <video
+              ref={videoRef}
+              src="/forklift_video.mp4"
+              controls
+              autoPlay
+              muted
+              loop
+              className="w-full h-full object-contain"
+              playsInline
+            />
+            {/* 軌跡オーバーレイ（バックエンド接続時のみ） */}
+            {data?.ready && transform && (
               <ForkliftOverlay
                 forklifts={data.forklifts}
                 transform={transform}
@@ -311,7 +289,24 @@ export default function AdminPage() {
                 frameH={frameH}
                 currentFrame={currentFrame}
               />
-            </div>
+            )}
+          </div>
+        </div>
+
+        {/* バックエンド未接続時の補足（動画は再生される。軌跡オーバーレイのみローカル限定） */}
+        {!BACKEND_CONFIGURED && (
+          <div className="rounded-lg border border-indigo-900/40 bg-indigo-950/20 px-4 py-3 flex items-center justify-between gap-3">
+            <p className="text-xs text-gray-400 leading-relaxed">
+              軌跡オーバーレイ・指示・評価はリアルタイム解析バックエンド（<code className="text-indigo-300">localhost:8000</code>）接続時に表示されます。
+              最適化シミュレーション結果はバックエンド不要でご覧いただけます。
+            </p>
+            <Link
+              href="/admin/optimization"
+              className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white transition-colors"
+            >
+              <Sparkles size={12} />
+              最適化を見る
+            </Link>
           </div>
         )}
 
