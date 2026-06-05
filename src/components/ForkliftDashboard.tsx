@@ -35,17 +35,33 @@ const DETECT_COLORS: Record<string, string> = {
 };
 
 type ViewMode = "dashboard" | "smartglass";
+type Phase = "intro" | "live";
+
+/** 先頭で再生する新動画（AR焼き込み済み・操作者なし） */
+const INTRO_VIDEO_SRC = "/forklift_ar_combined.mp4";
 
 export function ForkliftDashboard() {
   const stream = useVideoStream();
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard");
   const [started, setStarted] = useState(false);
+  const [phase, setPhase] = useState<Phase>("intro");
+  const [, setIntroFrame] = useState(0);
   const cfg = RISK_CONFIG[stream.risk];
+  const isIntro = phase === "intro";
   const isConnected = stream.status === "streaming" || stream.status === "downloading" || stream.status === "connecting" || stream.status === "analyzing";
+
+  // 新動画の再生終了 → 旧動画（バックエンド配信）へ切替
+  const handleIntroEnded = () => {
+    setPhase("live");
+    stream.connect();
+  };
+
+  // イントロ中はビュー切替を無効化（新動画はダッシュボードのカメラ枠で再生する）
+  const effectiveView: ViewMode = isIntro ? "dashboard" : viewMode;
 
   // 一度も開始していなければランディングを表示
   if (!started) {
-    return <LandingScreen onStart={() => { setStarted(true); stream.connect(); }} />;
+    return <LandingScreen onStart={() => { setStarted(true); setPhase("intro"); }} />;
   }
 
   return (
@@ -68,8 +84,9 @@ export function ForkliftDashboard() {
           <div className="flex items-center bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
             <button
               onClick={() => setViewMode("dashboard")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
-                viewMode === "dashboard"
+              disabled={isIntro}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                effectiveView === "dashboard"
                   ? "bg-indigo-600 text-white"
                   : "text-gray-500 hover:text-gray-300"
               }`}
@@ -80,8 +97,9 @@ export function ForkliftDashboard() {
             </button>
             <button
               onClick={() => setViewMode("smartglass")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
-                viewMode === "smartglass"
+              disabled={isIntro}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                effectiveView === "smartglass"
                   ? "bg-indigo-600 text-white"
                   : "text-gray-500 hover:text-gray-300"
               }`}
@@ -104,7 +122,7 @@ export function ForkliftDashboard() {
       </header>
 
       {/* ── スマートグラスモード ── */}
-      {viewMode === "smartglass" ? (
+      {effectiveView === "smartglass" ? (
         <main className="flex-1 min-h-0 p-4 flex flex-col gap-3">
           <SmartGlassHUD
             frame={stream.frame}
@@ -138,6 +156,10 @@ export function ForkliftDashboard() {
               status={stream.status}
               statusMessage={stream.statusMessage}
               detectionCount={stream.detections.length}
+              introActive={isIntro}
+              introSrc={INTRO_VIDEO_SRC}
+              onIntroFrame={setIntroFrame}
+              onIntroEnded={handleIntroEnded}
             />
 
             {/* スタット行 */}
@@ -169,6 +191,7 @@ export function ForkliftDashboard() {
             <OperatorPanel
               operator={stream.operatorState}
               streaming={isConnected}
+              paused={isIntro}
             />
 
             {/* 検出リスト */}

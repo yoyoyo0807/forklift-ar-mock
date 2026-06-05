@@ -4,6 +4,8 @@ import type { OperatorState } from "@/types";
 interface Props {
   operator: OperatorState | null;
   streaming: boolean;
+  /** 新動画（操作者が写らない映像）の区間中はモニタリングを停止表示する */
+  paused?: boolean;
 }
 
 function AttentionRing({ score }: { score: number }) {
@@ -68,7 +70,19 @@ function StatusBadge({ label, active, alertColor }: { label: string; active: boo
   );
 }
 
-export function OperatorPanel({ operator, streaming }: Props) {
+export function OperatorPanel({ operator, streaming, paused }: Props) {
+  if (paused) {
+    return (
+      <div className="bg-surface rounded-xl border border-border-default p-4">
+        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">操作者モニタリング</p>
+        <div className="flex flex-col items-center gap-1.5 py-4">
+          <span className="text-xs font-semibold text-gray-500">停止中</span>
+          <span className="text-[10px] text-gray-600">操作者がフレームに写っていません</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!streaming) {
     return (
       <div className="bg-surface rounded-xl border border-border-default p-4">

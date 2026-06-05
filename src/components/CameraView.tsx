@@ -1,4 +1,5 @@
 "use client";
+import { useRef, useState } from "react";
 import type { RiskLevel } from "@/types";
 
 interface Props {
@@ -9,7 +10,18 @@ interface Props {
   status: string;
   statusMessage: string;
   detectionCount: number;
+  /** イントロ（新動画）を再生中か */
+  introActive?: boolean;
+  /** イントロ動画のソースパス */
+  introSrc?: string;
+  /** イントロ動画のフレーム番号を親へ通知（後でパネル連動に使う） */
+  onIntroFrame?: (frameNumber: number) => void;
+  /** イントロ動画の再生終了 */
+  onIntroEnded?: () => void;
 }
+
+/** 新動画は 30fps 想定でフレーム番号を算出する */
+const INTRO_FPS = 30;
 
 function parseAnalysisProgress(msg: string): { pct: number; done: number; total: number } | null {
   const m = msg.match(/(\d+)\/(\d+)[^\d]*\((\d+)%\)/);
@@ -17,19 +29,45 @@ function parseAnalysisProgress(msg: string): { pct: number; done: number; total:
   return { done: parseInt(m[1]), total: parseInt(m[2]), pct: parseInt(m[3]) };
 }
 
-export function CameraView({ frame, frameNumber, fps, risk, status, statusMessage, detectionCount }: Props) {
+export function CameraView({
+  frame, frameNumber, fps, risk, status, statusMessage, detectionCount,
+  introActive, introSrc, onIntroFrame, onIntroEnded,
+}: Props) {
   const isCritical  = risk === "critical";
-  const isAnalyzing = status === "analyzing";
-  const isStreaming  = (status === "streaming" || frame !== null) && !isAnalyzing;
+  const isAnalyzing = !introActive && status === "analyzing";
+  const isStreaming  = !introActive && (status === "streaming" || frame !== null) && !isAnalyzing;
   const progress     = isAnalyzing ? parseAnalysisProgress(statusMessage) : null;
+
+  const introVideoRef = useRef<HTMLVideoElement>(null);
+  const [introFrame, setIntroFrame] = useState(0);
+
+  const handleIntroTimeUpdate = () => {
+    const v = introVideoRef.current;
+    if (!v) return;
+    const f = Math.floor(v.currentTime * INTRO_FPS);
+    setIntroFrame(f);
+    onIntroFrame?.(f);
+  };
 
   return (
     <div
       className={`relative rounded-xl overflow-hidden bg-gray-950 ${isCritical ? "ar-glow-critical" : ""}`}
       style={{ aspectRatio: "16/9" }}
     >
-      {/* YOLO11 アノテーション済みフレーム（バックエンドで描画） */}
-      {frame ? (
+      {/* イントロ（新動画・AR焼き込み済み） */}
+      {introActive && introSrc ? (
+        <video
+          ref={introVideoRef}
+          src={introSrc}
+          autoPlay
+          muted
+          playsInline
+          onTimeUpdate={handleIntroTimeUpdate}
+          onEnded={() => onIntroEnded?.()}
+          className="absolute inset-0 w-full h-full object-contain bg-black"
+        />
+      ) : /* YOLO11 アノテーション済みフレーム（バックエンドで描画） */
+      frame ? (
         <img
           src={`data:image/jpeg;base64,${frame}`}
           className="absolute inset-0 w-full h-full object-cover"
@@ -106,7 +144,16 @@ export function CameraView({ frame, frameNumber, fps, risk, status, statusMessag
         ))}
 
         {/* HUD 左上 */}
-        {isStreaming && (
+        {introActive ? (
+          <div className="absolute top-3 left-8 font-mono text-[10px] space-y-1 text-indigo-300">
+            <div className="bg-black/75 px-2 py-0.5 rounded backdrop-blur-sm">
+              FRAME {String(introFrame).padStart(6, "0")}
+            </div>
+            <div className="bg-black/75 px-2 py-0.5 rounded backdrop-blur-sm">
+              荷物認識デモ
+            </div>
+          </div>
+        ) : isStreaming && (
           <div className="absolute top-3 left-8 font-mono text-[10px] space-y-1 text-emerald-300">
             <div className="bg-black/75 px-2 py-0.5 rounded backdrop-blur-sm">
               FRAME {String(frameNumber).padStart(6, "0")}
@@ -119,7 +166,12 @@ export function CameraView({ frame, frameNumber, fps, risk, status, statusMessag
 
         {/* REC / LIVE 右上 */}
         <div className="absolute top-3 right-8">
-          {isStreaming ? (
+          {introActive ? (
+            <div className="flex items-center gap-1.5 bg-black/75 px-2 py-0.5 rounded text-[10px] font-mono text-indigo-400 backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+              AR DEMO
+            </div>
+          ) : isStreaming ? (
             <div className="flex items-center gap-1.5 bg-black/75 px-2 py-0.5 rounded text-[10px] font-mono text-red-400 backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
               LIVE ANALYSIS
